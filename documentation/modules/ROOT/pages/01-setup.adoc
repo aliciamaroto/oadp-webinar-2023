@@ -1,17 +1,13 @@
-= Setup
+= Environment Setup
 include::_attributes.adoc[]
 
 [#prerequisite]
 == Prerequisite CLI tools 2
 
-include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/prerequisites-kubernetes.adoc[]
-|===
+include::../partials/cli-tools.adoc[]
 
-include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/optional-requisites.adoc[]
-|===
-
-[#minikube]
-== Setup Kubernetes
+[#clustersetup]
+== Setup OpenShift Cluster
 
 :profile: my_profile
 
@@ -24,6 +20,16 @@ image::kubelogo.png[]
 [#downloadtutorial]
 == Get tutorial sources
 
-:tutorial-url: https://github.com/redhat-developer-demos/rhd-tutorial-common.git
-:folder: my_folder
-include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/download-sources.adoc[]
+Before we start setting up the environment, please fork the `Git` repository into your personal `Github` Account as follows:
+
+* Access the https://github.com/aliciamaroto/oadp-webinar-2023-lab/[OADP Repository]
+* Fork it on your GitHub account. If prompted, choose to fork only the `main` branch.
+* Clone the repository to your local machine. You can use both SSH and HTTPS URLs. If you have already configured your SSH keys, use this mechanism. If not, use HTTPS.
+
+[.lines_space]
+[.console-input]
+[source,bash, subs="+macros,+attributes"]
+----
+git clone https://github.com/<your_github_account>/oadp-webinar-2023-lab
+cd oadp-webinar-2023-lab
+----
