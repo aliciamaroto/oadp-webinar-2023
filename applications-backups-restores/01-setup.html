@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Environment Setup :: Applications backups &amp; restores in OpenShift</title>
+    <link rel="canonical" href="https://aliciamaroto.github.io/oadp-webinar-2023/applications-backups-restores/01-setup.html">
+    <link rel="prev" href="index.html">
+    <link rel="next" href="02-deploy.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/NewRHDFullLogo_4-color_white-wordmark.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://aliciamaroto.github.io/oadp-webinar-2023">Applications backups &amp; restores in OpenShift</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="applications-backups-restores" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">1. Lab Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#clustersetup">Cluster Setup</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-deploy.html">2. Install and configure OADP Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-deploy.html#install">Install Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-deploy.html#configure">Configure Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-backups.html">3. Create Application Backups</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-backups.html#app1">Application 1</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-backups.html#app2">Application 2</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-backups.html#app3">Application 3</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-backups.html#app4">Application 4</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-restores.html">4. Restore Applications</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-restores.html#simple">Restore simple application</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-restores.html#snapshot">Restore application with persistent storage using Snaphsots</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-restores.html#restic">Restore application with persistent storage using Restic</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-restores.html#datamover">Restore application with persistent storage using Data Mover</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Applications backups & restores in OpenShift</a></li>
+    <li><a href="01-setup.html">1. Lab Setup</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/aliciamaroto/oadp-webinar-2023/edit/master/documentation/modules/ROOT/pages/01-setup.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Environment Setup</h1>
+<div class="sect1">
+<h2 id="prerequisite"><a class="anchor" href="#prerequisite"></a>Prerequisite CLI tools 2</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following CLI tools are required for running the exercises in this workshop.</p>
+</div>
+<div class="paragraph">
+<p>Please have them installed and configured before you get started.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><strong>Tool</strong></th>
+<th class="tableblock halign-left valign-top"><strong>macOS</strong></th>
+<th class="tableblock halign-left valign-top"><strong>Linux/Fedora</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Git</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/mac">Download</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/linux">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Openshift client 4.10</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.10.10/openshift-client-mac-4.10.10.tar.gz">Download</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.10.10/openshift-client-linux-4.10.10.tar.gz">Download</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="clustersetup"><a class="anchor" href="#clustersetup"></a>Setup OpenShift Cluster</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The profile my_profile is created to run the tutorial:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_minikube"></a>Minikube</p>
+</li>
+<li>
+<p><a id="tabset1_openshift"></a>OpenShift</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_minikube">
+<div class="paragraph">
+<p>Having <code>minikube</code> installed and in your <code>PATH</code>, then run:</p>
+</div>
+<div class="paragraph">
+<p><strong>MacOS</strong></p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=virtualbox -p my_profile</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Linux</strong></p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=kvm2 -p my_profile</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Windows:</strong></p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=hyperv -p my_profile</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the output must be something similar like:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">😄  [my_profile] minikube v1.20.0 on Darwin 11.3
+✅  Created a new profile : my_profile
+✅  minikube profile was successfully set to my_profile
+😄  [default] minikube {minikube-version} on Darwin 11.3
+✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
+🔥  Creating virtualbox VM (CPUs=2, Memory=8192MB, Disk=50000MB) ...
+🐳  Preparing Kubernetes {kubernetes-version} on Docker '20.10.6' ...
+    ▪ apiserver.enable-admission-plugins=LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook
+🚜  Pulling images ...
+🚀  Launching Kubernetes ...
+⌛  Waiting for cluster to come online ...
+🏄  Done! kubectl is now configured to use "my_profile"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally configure to use minikube internal docker as docker host:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">eval $(minikube docker-env -p my_profile)</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_openshift">
+<div class="paragraph">
+<p>To run OpenShift4, you need to have one provisioned using <a href="https://try.openshift.com">try.openshift.com</a> or can use any existing OpenShift4 cluster.
+Once you have your cluster, you can download the latest OpenShift client(oc) from <a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/">here</a> and add to your path.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc version</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can check the OpenShift version using:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc version</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output should show oc version &gt;=4.7:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Client Version: 4.7.0-202102130115.p0-c66c03f
+Kubernetes Version: {kubernetes-version}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then login into the OpenShift cluster using <code>oc login</code></p>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>And then you are ready for start using Kubernetes:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/kubelogo.png" alt="kubelogo">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="downloadtutorial"><a class="anchor" href="#downloadtutorial"></a>Get tutorial sources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before we start setting up the environment, please fork the <code>Git</code> repository into your personal <code>Github</code> Account as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Access the <a href="https://github.com/aliciamaroto/oadp-webinar-2023-lab/">OADP Repository</a></p>
+</li>
+<li>
+<p>Fork it on your GitHub account. If prompted, choose to fork only the <code>main</code> branch.</p>
+</li>
+<li>
+<p>Clone the repository to your local machine. You can use both SSH and HTTPS URLs. If you have already configured your SSH keys, use this mechanism. If not, use HTTPS.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/&lt;your_github_account&gt;/oadp-webinar-2023-lab" class="bare">https://github.com/&lt;your_github_account&gt;/oadp-webinar-2023-lab</a>
+cd oadp-webinar-2023-lab</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">Applications backups & restores in OpenShift</a></span>
+  <span class="next"><a href="02-deploy.html">2. Install and configure OADP Operator</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
