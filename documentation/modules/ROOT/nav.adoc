@@ -1,7 +1,19 @@
-* xref:01-setup.adoc[1. Environment Setup]
+* xref:01-setup.adoc[1. Lab Setup]
 ** xref:01-setup.adoc#prerequisite[Prerequisites]
 ** xref:01-setup.adoc#clustersetup[Cluster Setup]
 
-* xref:02-deploy.adoc[2. Install OADP Operator]
-** xref:02-deploy.adoc#package[Build Service]
-** xref:02-deploy.adoc#deploy[Deploy Dervice]
+* xref:02-deploy.adoc[2. Install and configure OADP Operator]
+** xref:02-deploy.adoc#install[Install Operator]
+** xref:02-deploy.adoc#configure[Configure Operator]
+
+* xref:03-backups.adoc[3. Create Application Backups]
+** xref:03-backups.adoc#app1[Application 1]
+** xref:03-backups.adoc#app2[Application 2]
+** xref:03-backups.adoc#app3[Application 3]
+** xref:03-backups.adoc#app4[Application 4]
+
+* xref:04-restores.adoc[4. Restore Applications]
+** xref:04-restores.adoc#simple[Restore simple application]
+** xref:04-restores.adoc#snapshot[Restore application with persistent storage using Snaphsots]
+** xref:04-restores.adoc#restic[Restore application with persistent storage using Restic]
+** xref:04-restores.adoc#datamover[Restore application with persistent storage using Data Mover]
