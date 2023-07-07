@@ -1,5 +1,5 @@
-name: template-tutorial
-title: Template Tutorial
+name: applications-backups-restores
+title: Applications backups & restores in OpenShift 
 version: master
 nav:
   - modules/ROOT/nav.adoc
