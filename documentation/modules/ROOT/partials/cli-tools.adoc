@@ -1,0 +1,16 @@
+The following CLI tools are required for running the exercises in this workshop. 
+
+Please have them installed and configured before you get started.
+
+|===
+|**Tool**|**macOS**|**Linux/Fedora**
+
+| `Git`
+| https://git-scm.com/download/mac[Download]
+| https://git-scm.com/download/linux[Download]
+
+| `Openshift client 4.10`
+| https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.10.10/openshift-client-mac-4.10.10.tar.gz[Download]
+| https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.10.10/openshift-client-linux-4.10.10.tar.gz[Download]
+
+|===
