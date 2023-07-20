@@ -1,8 +1,8 @@
 = Deploy Service
 include::_attributes.adoc[]
 
-[#service]
-== The Service
+[#install]
+== Install operator
 
 The code:
 
@@ -21,8 +21,8 @@ public class Main {
 ./mvnw compile
 ----
 
-[#package]
-== Packaging the Service
+[#configure]
+== Configure Operator
 
 You can package the next bash script:
 

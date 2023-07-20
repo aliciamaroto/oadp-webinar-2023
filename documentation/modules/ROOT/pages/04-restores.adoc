@@ -1,13 +1,13 @@
 = Environment Setup
 include::_attributes.adoc[]
 
-[#prerequisite]
-== Prerequisite CLI tools 2
+[#simple]
+== Restore simple application
 
 include::../partials/cli-tools.adoc[]
 
-[#clustersetup]
-== Setup OpenShift Cluster
+[#snapshot]
+== Restore application with persistent storage using Snaphsots
 
 :profile: my_profile
 
@@ -15,10 +15,9 @@ include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-c
 
 And then you are ready for start using Kubernetes:
 
-image::kubelogo.png[]
 
-[#downloadtutorial]
-== Get tutorial sources
+[#restic]
+== Restore application with persistent storage using Restic
 
 Before we start setting up the environment, please fork the `Git` repository into your personal `Github` Account as follows:
 
@@ -33,3 +32,6 @@ Before we start setting up the environment, please fork the `Git` repository int
 git clone https://github.com/<your_github_account>/oadp-webinar-2023-lab
 cd oadp-webinar-2023-lab
 ----
+
+[#datamover]
+== Restore application with persistent storage using Data Mover

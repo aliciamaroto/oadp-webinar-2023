@@ -11,12 +11,6 @@ include::../partials/cli-tools.adoc[]
 
 :profile: my_profile
 
-include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/kubernetes-setup.adoc[]
-
-And then you are ready for start using Kubernetes:
-
-image::kubelogo.png[]
-
 [#downloadtutorial]
 == Get tutorial sources
 
