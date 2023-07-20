@@ -133,7 +133,7 @@
 <article class="doc">
 <h1 class="page">Environment Setup</h1>
 <div class="sect1">
-<h2 id="prerequisite"><a class="anchor" href="#prerequisite"></a>Prerequisite CLI tools 2</h2>
+<h2 id="simple"><a class="anchor" href="#simple"></a>Restore simple application</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The following CLI tools are required for running the exercises in this workshop.</p>
@@ -161,16 +161,16 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/linux">Download</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Openshift client 4.10</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.10.10/openshift-client-mac-4.10.10.tar.gz">Download</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.10.10/openshift-client-linux-4.10.10.tar.gz">Download</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Openshift client 4.12</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.12.25/openshift-client-mac-4.12.25.tar.gz">Download</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.12.25/openshift-client-linux-4.12.25.tar.gz">Download</a></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="sect1">
-<h2 id="clustersetup"><a class="anchor" href="#clustersetup"></a>Setup OpenShift Cluster</h2>
+<h2 id="snapshot"><a class="anchor" href="#snapshot"></a>Restore application with persistent storage using Snaphsots</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The profile my_profile is created to run the tutorial:</p>
@@ -279,15 +279,10 @@ Kubernetes Version: {kubernetes-version}</code></pre>
 <div class="paragraph">
 <p>And then you are ready for start using Kubernetes:</p>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/kubelogo.png" alt="kubelogo">
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="downloadtutorial"><a class="anchor" href="#downloadtutorial"></a>Get tutorial sources</h2>
+<h2 id="restic"><a class="anchor" href="#restic"></a>Restore application with persistent storage using Restic</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Before we start setting up the environment, please fork the <code>Git</code> repository into your personal <code>Github</code> Account as follows:</p>
@@ -311,6 +306,12 @@ Kubernetes Version: {kubernetes-version}</code></pre>
 cd oadp-webinar-2023-lab</code></pre>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="datamover"><a class="anchor" href="#datamover"></a>Restore application with persistent storage using Data Mover</h2>
+<div class="sectionbody">
+
 </div>
 </div>
 <nav class="pagination">
