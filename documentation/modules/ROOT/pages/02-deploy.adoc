@@ -1,43 +1,21 @@
-= Deploy Service
+= Install and configure OADP Operator
 include::_attributes.adoc[]
+
+This section includes the necessary steps to start working on the webinar. This guide will begin with the installation and configuration of the OADP Operator.
 
 [#install]
 == Install operator
 
-The code:
+The OADP Operator can be installed through the Operator Hub as shown below:
 
-[.lines_7]
-[.console-input]
-[source, java,subs="+macros,+attributes"]
-----
-public class Main {
+image::deploy/operator-install.png[]
 
-    public static void main(String[] args) {
-
-    } 
-
-}
-
-./mvnw compile
-----
 
 [#configure]
 == Configure Operator
 
-You can package the next bash script:
-
+Once the Operator is installed, we need to create the Data Protection Application Object.
 [source,bash,subs="+macros,+attributes"]
 ----
 include::example$run.sh[]
 ----
-
-[#deploy]
-== Deploy the Service
-
-And then you can deploy the service and execute commands inside:
-
-:podname: apps
-
-include::partial$exec_pod.adoc[]
-
-:!podname:
