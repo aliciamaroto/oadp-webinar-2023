@@ -1,7 +1,15 @@
 = Install and configure OADP Operator
 include::_attributes.adoc[]
 
-This section includes the necessary steps to start working on the webinar. This guide will begin with the installation and configuration of the OADP Operator.
+This section includes the necessary steps to start working on the webinar. This guide will begin with the installation and configuration of the OADP Operator. In order to perform backups and restores in OpenShift using this approach, you also need to have configured an object storage as backup location. The object storage can be on of the following:
+
+- Amazon Web Services
+- Microsoft Azure
+- Google Cloud Platform
+- Multi Cloud Object Gateway
+- AWS S3 compatible object storage, such as Noobaa or Minio.
+
+In this workshop, the technology used will be 
 
 [#install]
 == Install operator
@@ -14,8 +22,86 @@ image::deploy/operator-install.png[]
 [#configure]
 == Configure Operator
 
-Once the Operator is installed, we need to create the Data Protection Application Object.
-[source,bash,subs="+macros,+attributes"]
+Once the Operator is installed, we need to configure the object storage and create a secret in OpenShift in order to be able to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object. 
+
+=== Object Storage
+
+
+=== Secret
+
+We need to create a default secret with the credentials that allows the DataProtectionApplication to access the storage locations.
+
+Edit the file `credentials-velero` with the credentials of your storage location credentials.
+
+Create the Secret with the default name:
+
 ----
-include::example$run.sh[]
+oc create secret generic cloud-credentials -n openshift-adp --from-file cloud=credentials-velero
 ----
+
+=== DataProtectionApplication
+
+Edit the file `dpa.yaml` by adding the following parameters:
+
+- `velero.config`: Complete these fields with the storage location configuration
+- `credential.name`: Secret name created in the previous section.
+- `velero.objectStorage`: This is the bucket that will be used to store the backups. 
+
+[source,yaml,subs="+macros,+attributes"]
+----
+apiVersion: oadp.openshift.io/v1beta1
+kind: DataProtectionApplication
+metadata:
+  name: velero-sample
+  namespace: openshift-adp
+spec:
+  configuration:
+    velero:
+      defaultPlugins:
+        - azure
+        - openshift 
+    restic:
+      enable: true 
+  backupLocations:
+    - velero:
+        config:
+          resourceGroup: <azure_resource_group> 
+          storageAccount: <azure_storage_account_id> 
+          subscriptionId: <azure_subscription_id> 
+          storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
+        credential:
+          key: cloud
+          name: cloud-credentials  
+        provider: azure
+        default: true
+        objectStorage:
+          bucket: <bucket_name> 
+          prefix: velero
+  snapshotLocations: 
+    - velero:
+        config:
+          resourceGroup: <azure_resource_group>
+          subscriptionId: <azure_subscription_id>
+          incremental: "true"
+        name: default
+        provider: azure
+
+----
+
+And then, create the object:
+
+----
+oc apply -f dpa.yaml -n openshift-adp
+----
+
+Finally, to check that everything has been installed correctly:
+
+----
+oc get all -n openshift-adp
+----
+
+The output should be similar to this:
+
+
+
+Now, we have everything configured so we can start to create our backups. 

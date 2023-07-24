@@ -1,30 +1,41 @@
-= Environment Setup
-include::_attributes.adoc[]
+= Create Application Backups
+
+In this section we are going to test different scenarios when performing backups. We will be creating four different applications with different features and then we will back them up.
 
 [#app1]
 == Application 1
 
-include::../partials/cli-tools.adoc[]
+The first application will be a simple `httpd` application. We can create the application as follows:
+
+1. Create a project called `application-01`
+
+----
+oc new-project application-01
+----
+
+2. Go to the Developer perspective in the OpenShift Console
+
+image::backups/app01-1.png[]
+
+3. In the developer catalogue choose the application *Apache HTTP Server (httpd)* 
+
+image::backups/app01-2.png[]
+
+4. Fill the `Git Repo URL` by pressing `Try sample` and the `Name` with the desired application name and then click on *Create*
+
+image::backups/app01-3.png[]
+
+Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section.
+
+
 
 [#app2]
 == Application 2
 
-:profile: my_profile
-
-include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/kubernetes-setup.adoc[]
-
-And then you are ready for start using Kubernetes:
-
-image::kubelogo.png[]
 
 [#app3]
 == Application 3
 
-Before we start setting up the environment, please fork the `Git` repository into your personal `Github` Account as follows:
-
-* Access the https://github.com/aliciamaroto/oadp-webinar-2023-lab/[OADP Repository]
-* Fork it on your GitHub account. If prompted, choose to fork only the `main` branch.
-* Clone the repository to your local machine. You can use both SSH and HTTPS URLs. If you have already configured your SSH keys, use this mechanism. If not, use HTTPS.
 
 [#app4]
 == Application 4
