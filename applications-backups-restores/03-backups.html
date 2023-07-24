@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Environment Setup :: Applications backups &amp; restores in OpenShift</title>
+    <title>Create Application Backups :: Applications backups &amp; restores in OpenShift</title>
     <link rel="canonical" href="https://aliciamaroto.github.io/oadp-webinar-2023/applications-backups-restores/03-backups.html">
     <link rel="prev" href="02-deploy.html">
     <link rel="next" href="04-restores.html">
@@ -132,180 +132,83 @@
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Environment Setup</h1>
+<h1 class="page">Create Application Backups</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section we are going to test different scenarios when performing backups. We will be creating four different applications with different features and then we will back them up.</p>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="app1"><a class="anchor" href="#app1"></a>Application 1</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The following CLI tools are required for running the exercises in this workshop.</p>
+<p>The first application will be a simple <code>httpd</code> application. We can create the application as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a project called <code>application-01</code></p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc new-project application-01</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to the Developer perspective in the OpenShift Console</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app01-1.png" alt="app01 1">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the developer catalogue choose the application <strong>Apache HTTP Server (httpd)</strong></p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app01-2.png" alt="app01 2">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Fill the <code>Git Repo URL</code> by pressing <code>Try sample</code> and the <code>Name</code> with the desired application name and then click on <strong>Create</strong></p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app01-3.png" alt="app01 3">
+</div>
 </div>
 <div class="paragraph">
-<p>Please have them installed and configured before you get started.</p>
+<p>Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top"><strong>Tool</strong></th>
-<th class="tableblock halign-left valign-top"><strong>macOS</strong></th>
-<th class="tableblock halign-left valign-top"><strong>Linux/Fedora</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Git</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/mac">Download</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/linux">Download</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Openshift client 4.12</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.12.25/openshift-client-mac-4.12.25.tar.gz">Download</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.12.25/openshift-client-linux-4.12.25.tar.gz">Download</a></p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="sect1">
 <h2 id="app2"><a class="anchor" href="#app2"></a>Application 2</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The profile my_profile is created to run the tutorial:</p>
-</div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset1_minikube"></a>Minikube</p>
-</li>
-<li>
-<p><a id="tabset1_openshift"></a>OpenShift</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_minikube">
-<div class="paragraph">
-<p>Having <code>minikube</code> installed and in your <code>PATH</code>, then run:</p>
-</div>
-<div class="paragraph">
-<p><strong>MacOS</strong></p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=virtualbox -p my_profile</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Linux</strong></p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=kvm2 -p my_profile</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Windows:</strong></p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=hyperv -p my_profile</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>And the output must be something similar like:</p>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">😄  [my_profile] minikube v1.20.0 on Darwin 11.3
-✅  Created a new profile : my_profile
-✅  minikube profile was successfully set to my_profile
-😄  [default] minikube {minikube-version} on Darwin 11.3
-✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
-🔥  Creating virtualbox VM (CPUs=2, Memory=8192MB, Disk=50000MB) ...
-🐳  Preparing Kubernetes {kubernetes-version} on Docker '20.10.6' ...
-    ▪ apiserver.enable-admission-plugins=LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook
-🚜  Pulling images ...
-🚀  Launching Kubernetes ...
-⌛  Waiting for cluster to come online ...
-🏄  Done! kubectl is now configured to use "my_profile"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Finally configure to use minikube internal docker as docker host:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">eval $(minikube docker-env -p my_profile)</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset1_openshift">
-<div class="paragraph">
-<p>To run OpenShift4, you need to have one provisioned using <a href="https://try.openshift.com">try.openshift.com</a> or can use any existing OpenShift4 cluster.
-Once you have your cluster, you can download the latest OpenShift client(oc) from <a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/">here</a> and add to your path.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>oc version</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can check the OpenShift version using:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc version</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The output should show oc version &gt;=4.7:</p>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Client Version: 4.7.0-202102130115.p0-c66c03f
-Kubernetes Version: {kubernetes-version}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Then login into the OpenShift cluster using <code>oc login</code></p>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>And then you are ready for start using Kubernetes:</p>
-</div>
-<div class="imageblock unresolved">
-<div class="content">
-<img src="kubelogo.png" alt="kubelogo">
-</div>
-</div>
+
 </div>
 </div>
 <div class="sect1">
 <h2 id="app3"><a class="anchor" href="#app3"></a>Application 3</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Before we start setting up the environment, please fork the <code>Git</code> repository into your personal <code>Github</code> Account as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Access the <a href="https://github.com/aliciamaroto/oadp-webinar-2023-lab/">OADP Repository</a></p>
-</li>
-<li>
-<p>Fork it on your GitHub account. If prompted, choose to fork only the <code>main</code> branch.</p>
-</li>
-<li>
-<p>Clone the repository to your local machine. You can use both SSH and HTTPS URLs. If you have already configured your SSH keys, use this mechanism. If not, use HTTPS.</p>
-</li>
-</ul>
-</div>
+
 </div>
 </div>
 <div class="sect1">

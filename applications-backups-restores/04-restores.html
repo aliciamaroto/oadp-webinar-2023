@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Environment Setup :: Applications backups &amp; restores in OpenShift</title>
+    <title>Restore Applications :: Applications backups &amp; restores in OpenShift</title>
     <link rel="canonical" href="https://aliciamaroto.github.io/oadp-webinar-2023/applications-backups-restores/04-restores.html">
     <link rel="prev" href="03-backups.html">
     <meta name="generator" content="Antora 3.0.0">
@@ -131,181 +131,30 @@
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Environment Setup</h1>
+<h1 class="page">Restore Applications</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this last section we are going to perform the restores of the previous backed up applications.</p>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="simple"><a class="anchor" href="#simple"></a>Restore simple application</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The following CLI tools are required for running the exercises in this workshop.</p>
-</div>
-<div class="paragraph">
-<p>Please have them installed and configured before you get started.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top"><strong>Tool</strong></th>
-<th class="tableblock halign-left valign-top"><strong>macOS</strong></th>
-<th class="tableblock halign-left valign-top"><strong>Linux/Fedora</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Git</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/mac">Download</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/linux">Download</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Openshift client 4.12</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.12.25/openshift-client-mac-4.12.25.tar.gz">Download</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.12.25/openshift-client-linux-4.12.25.tar.gz">Download</a></p></td>
-</tr>
-</tbody>
-</table>
+
 </div>
 </div>
 <div class="sect1">
 <h2 id="snapshot"><a class="anchor" href="#snapshot"></a>Restore application with persistent storage using Snaphsots</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The profile my_profile is created to run the tutorial:</p>
-</div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset1_minikube"></a>Minikube</p>
-</li>
-<li>
-<p><a id="tabset1_openshift"></a>OpenShift</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_minikube">
-<div class="paragraph">
-<p>Having <code>minikube</code> installed and in your <code>PATH</code>, then run:</p>
-</div>
-<div class="paragraph">
-<p><strong>MacOS</strong></p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=virtualbox -p my_profile</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Linux</strong></p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=kvm2 -p my_profile</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Windows:</strong></p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version={kubernetes-version} --vm-driver=hyperv -p my_profile</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>And the output must be something similar like:</p>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">😄  [my_profile] minikube v1.20.0 on Darwin 11.3
-✅  Created a new profile : my_profile
-✅  minikube profile was successfully set to my_profile
-😄  [default] minikube {minikube-version} on Darwin 11.3
-✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
-🔥  Creating virtualbox VM (CPUs=2, Memory=8192MB, Disk=50000MB) ...
-🐳  Preparing Kubernetes {kubernetes-version} on Docker '20.10.6' ...
-    ▪ apiserver.enable-admission-plugins=LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook
-🚜  Pulling images ...
-🚀  Launching Kubernetes ...
-⌛  Waiting for cluster to come online ...
-🏄  Done! kubectl is now configured to use "my_profile"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Finally configure to use minikube internal docker as docker host:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">eval $(minikube docker-env -p my_profile)</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset1_openshift">
-<div class="paragraph">
-<p>To run OpenShift4, you need to have one provisioned using <a href="https://try.openshift.com">try.openshift.com</a> or can use any existing OpenShift4 cluster.
-Once you have your cluster, you can download the latest OpenShift client(oc) from <a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/">here</a> and add to your path.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>oc version</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can check the OpenShift version using:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc version</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The output should show oc version &gt;=4.7:</p>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Client Version: 4.7.0-202102130115.p0-c66c03f
-Kubernetes Version: {kubernetes-version}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Then login into the OpenShift cluster using <code>oc login</code></p>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>And then you are ready for start using Kubernetes:</p>
-</div>
+
 </div>
 </div>
 <div class="sect1">
 <h2 id="restic"><a class="anchor" href="#restic"></a>Restore application with persistent storage using Restic</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Before we start setting up the environment, please fork the <code>Git</code> repository into your personal <code>Github</code> Account as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Access the <a href="https://github.com/aliciamaroto/oadp-webinar-2023-lab/">OADP Repository</a></p>
-</li>
-<li>
-<p>Fork it on your GitHub account. If prompted, choose to fork only the <code>main</code> branch.</p>
-</li>
-<li>
-<p>Clone the repository to your local machine. You can use both SSH and HTTPS URLs. If you have already configured your SSH keys, use this mechanism. If not, use HTTPS.</p>
-</li>
-</ul>
-</div>
-<div class="listingblock lines_space console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/&lt;your_github_account&gt;/oadp-webinar-2023-lab" class="bare">https://github.com/&lt;your_github_account&gt;/oadp-webinar-2023-lab</a>
-cd oadp-webinar-2023-lab</code></pre>
-</div>
-</div>
+
 </div>
 </div>
 <div class="sect1">

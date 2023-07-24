@@ -136,7 +136,29 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section includes the necessary steps to start working on the webinar. This guide will begin with the installation and configuration of the OADP Operator.</p>
+<p>This section includes the necessary steps to start working on the webinar. This guide will begin with the installation and configuration of the OADP Operator. In order to perform backups and restores in OpenShift using this approach, you also need to have configured an object storage as backup location. The object storage can be on of the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Amazon Web Services</p>
+</li>
+<li>
+<p>Microsoft Azure</p>
+</li>
+<li>
+<p>Google Cloud Platform</p>
+</li>
+<li>
+<p>Multi Cloud Object Gateway</p>
+</li>
+<li>
+<p>AWS S3 compatible object storage, such as Noobaa or Minio.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In this workshop, the technology used will be</p>
 </div>
 </div>
 </div>
@@ -157,12 +179,108 @@
 <h2 id="configure"><a class="anchor" href="#configure"></a>Configure Operator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Once the Operator is installed, we need to create the Data Protection Application Object.</p>
+<p>Once the Operator is installed, we need to configure the object storage and create a secret in OpenShift in order to be able to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object.</p>
+</div>
+<div class="sect2">
+<h3 id="_object_storage"><a class="anchor" href="#_object_storage"></a>Object Storage</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_secret"><a class="anchor" href="#_secret"></a>Secret</h3>
+<div class="paragraph">
+<p>We need to create a default secret with the credentials that allows the DataProtectionApplication to access the storage locations.</p>
+</div>
+<div class="paragraph">
+<p>Edit the file <code>credentials-velero</code> with the credentials of your storage location credentials.</p>
+</div>
+<div class="paragraph">
+<p>Create the Secret with the default name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/bin/sh
-echo "Hello World"</code></pre>
+<pre>oc create secret generic cloud-credentials -n openshift-adp --from-file cloud=credentials-velero</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_dataprotectionapplication"><a class="anchor" href="#_dataprotectionapplication"></a>DataProtectionApplication</h3>
+<div class="paragraph">
+<p>Edit the file <code>dpa.yaml</code> by adding the following parameters:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>velero.config</code>: Complete these fields with the storage location configuration</p>
+</li>
+<li>
+<p><code>credential.name</code>: Secret name created in the previous section.</p>
+</li>
+<li>
+<p><code>velero.objectStorage</code>: This is the bucket that will be used to store the backups.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: oadp.openshift.io/v1beta1
+kind: DataProtectionApplication
+metadata:
+  name: velero-sample
+  namespace: openshift-adp
+spec:
+  configuration:
+    velero:
+      defaultPlugins:
+        - azure
+        - openshift
+    restic:
+      enable: true
+  backupLocations:
+    - velero:
+        config:
+          resourceGroup: &lt;azure_resource_group&gt;
+          storageAccount: &lt;azure_storage_account_id&gt;
+          subscriptionId: &lt;azure_subscription_id&gt;
+          storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
+        credential:
+          key: cloud
+          name: cloud-credentials
+        provider: azure
+        default: true
+        objectStorage:
+          bucket: &lt;bucket_name&gt;
+          prefix: velero
+  snapshotLocations:
+    - velero:
+        config:
+          resourceGroup: &lt;azure_resource_group&gt;
+          subscriptionId: &lt;azure_subscription_id&gt;
+          incremental: "true"
+        name: default
+        provider: azure</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And then, create the object:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc apply -f dpa.yaml -n openshift-adp</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally, to check that everything has been installed correctly:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc get all -n openshift-adp</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output should be similar to this:</p>
+</div>
+<div class="paragraph">
+<p>Now, we have everything configured so we can start to create our backups.</p>
 </div>
 </div>
 </div>
