@@ -144,7 +144,7 @@
 <h2 id="app1"><a class="anchor" href="#app1"></a>Application 1</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The first application will be a simple <code>httpd</code> application. We can create the application as follows:</p>
+<p>The first application will be a simple application based on Apache. We can create the application as follows:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -197,24 +197,229 @@
 <div class="paragraph">
 <p>Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: backup-app01
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+    - application-01</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="app2"><a class="anchor" href="#app2"></a>Application 2</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>The second application will be an app based on Apache with a PVC attached, and we will be using Snapshots to perform the volume backups.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a project called <code>application-02</code></p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc new-project application-02</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to the Developer perspective in the OpenShift Console and follow the same procedure as in application 01.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app02-1.png" alt="app02 1">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Once the application is up and running, we need to attatch a PVC to it.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app02-2.png" alt="app02 2">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create the backup.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>When performing a backup using snapshots, we first need to edit the resource <code>VolumeSnapshotClass</code> to be as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: &lt;volume_snapshot_class_name&gt;
+  labels:
+    velero.io/csi-volumesnapshot-class: "true"
+driver: &lt;csi_driver&gt;
+deletionPolicy: Retain</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, we can proceed to create the backup, making sure to set the <code>snapshotVolumes</code> parameter to <code>true</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: backup-app02
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+    - application-02
+  snapshotVolumes: true</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="app3"><a class="anchor" href="#app3"></a>Application 3</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>The third demo will be an app based on Apache with a PVC attached, and we will be using Restic to perform the volume backups.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a project called <code>application-03</code></p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc new-project application-03</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to the Developer perspective in the OpenShift Console and follow the same procedure as in application 01 and 02.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app03-1.png" alt="app03 1">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Once the application is up and running, we need to attatch a PVC to it.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app03-2.png" alt="app03 2">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create the backup.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In this case, we need to set the parameter <code>defaultVolumesToRestic</code> to <code>true</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: backup-app03
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+    - application-03
+  defaultVolumesToRestic: true</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="app4"><a class="anchor" href="#app4"></a>Application 4</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>The third demo will be an app based on Apache with a PVC attached, and we will be using using Snapshots and Data Mover for the the volume backups.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a project called <code>application-04</code></p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc new-project application-04</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to the Developer perspective in the OpenShift Console and follow the same procedure as in the previous demos.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app04-1.png" alt="app04 1">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Once the application is up and running, we need to attatch a PVC to it.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app04-2.png" alt="app04 2">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create the backup.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In this scenario, we first need to install the VolSync Operator. This can be done via the Operator Hub in Openshift:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app04-3.png" alt="app04 3">
+</div>
+</div>
+<div class="paragraph">
+<p>Then, we need to edit the DataProtectionApplication resource in order to add the Data Mover functionality.</p>
+</div>
 </div>
 </div>
 <nav class="pagination">
