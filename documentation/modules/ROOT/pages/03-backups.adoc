@@ -164,4 +164,123 @@ In this scenario, we first need to install the VolSync Operator. This can be don
 
 image::backups/app04-3.png[]
 
-Then, we need to edit the DataProtectionApplication resource in order to add the Data Mover functionality. 
+Then, we need to prepare the environment in order to use the Data Mover functionality.
+
+- The default `volumeSnapshotClass` should be as follows:
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: snapshot.storage.k8s.io/v1
+deletionPolicy: Retain
+driver: openshift-storage.cephfs.csi.ceph.com
+kind: VolumeSnapshotClass
+metadata:
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "true"
+  labels:
+    velero.io/csi-volumesnapshot-class: "true"
+  name: ocs-storagecluster-cephfsplugin-snapclass
+parameters:
+  clusterID: openshift-storage
+  csi.storage.k8s.io/snapshotter-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/snapshotter-secret-namespace: openshift-storage
+
+----
+
+- The OADP namespace needs to have the annotation `volsync.backube/privileged-mover` set to true
+
+---
+oc annotate --overwrite namespace/openshift-adp volsync.backube/privileged-movers='true'
+---
+
+- Configure a Restic secret 
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: restic-secret
+  namespace: openshift-adp
+type: Opaque
+stringData:
+# The repository encryption key
+  RESTIC_PASSWORD: restic-password
+ 
+----
+
+---
+oc apply -f restic-secret.yaml 
+---
+
+Finally, we need to modify the DataProtectionApplication to include the Data Mover feature:
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+ind: DataProtectionApplication
+apiVersion: oadp.openshift.io/v1alpha1
+metadata:
+ name: velero-sample
+ namespace: openshift-adp
+spec:
+ backupLocations:
+   - velero:
+       config:
+         profile: "default"
+          region: nooobaa
+          s3Url: <url>
+          insecureSkipTLSVerify: "true"
+          s3ForcePathStyle: "true"
+        provider: aws
+        default: true
+        credential:
+          key: cloud
+          name: cloud-credentials
+        objectStorage:
+          bucket: <bucket_name>
+          prefix: velero
+  configuration:
+   restic:
+     enable: true
+   velero:
+     defaultPlugins:
+       - openshift
+       - aws
+       - csi
+       - vsm
+  features:
+    dataMover:
+      credentialName: restic-secret
+      enable: true
+      volumeOptionsForStorageClasses:
+        ocs-storagecluster-cephfs:
+          sourceVolumeOptions:
+            accessMode: ReadOnlyMany
+            cacheAccessMode: ReadWriteMany
+            cacheStorageClassName: ocs-storagecluster-cephfs
+            storageClassName: ocs-storagecluster-cephfs-shallow
+----
+
+Once the DPA is reconciled, the backups created will use the Data Mover feature by default.
+
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: backup-app04
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+    - application-04
+  snapshotVolumes: true
+
+----
