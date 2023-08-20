@@ -5,7 +5,7 @@ In this section we are going to test different scenarios when performing backups
 [#app1]
 == Application 1
 
-The first application will be a simple `httpd` application. We can create the application as follows:
+The first application will be a simple application based on Apache. We can create the application as follows:
 
 1. Create a project called `application-01`
 
@@ -27,15 +27,141 @@ image::backups/app01-3.png[]
 
 Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section.
 
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: backup-app01
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+    - application-01
+
+----
 
 
 [#app2]
 == Application 2
 
+The second application will be an app based on Apache with a PVC attached, and we will be using Snapshots to perform the volume backups.
+
+1. Create a project called `application-02`
+
+----
+oc new-project application-02
+----
+
+2. Go to the Developer perspective in the OpenShift Console and follow the same procedure as in application 01.
+
+image::backups/app02-1.png[]
+
+3. Once the application is up and running, we need to attatch a PVC to it.
+
+image::backups/app02-2.png[]
+
+4. Create the backup.
+
+When performing a backup using snapshots, we first need to edit the resource `VolumeSnapshotClass` to be as follows:
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: <volume_snapshot_class_name>
+  labels:
+    velero.io/csi-volumesnapshot-class: "true"
+driver: <csi_driver>
+deletionPolicy: Retain
+
+----
+
+Then, we can proceed to create the backup, making sure to set the `snapshotVolumes` parameter to `true`.
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: backup-app02
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+    - application-02
+  snapshotVolumes: true
+
+----
+
 
 [#app3]
 == Application 3
 
+The third demo will be an app based on Apache with a PVC attached, and we will be using Restic to perform the volume backups.
+
+1. Create a project called `application-03`
+
+----
+oc new-project application-03
+----
+
+2. Go to the Developer perspective in the OpenShift Console and follow the same procedure as in application 01 and 02.
+
+image::backups/app03-1.png[]
+
+3. Once the application is up and running, we need to attatch a PVC to it.
+
+image::backups/app03-2.png[]
+
+4. Create the backup.
+
+In this case, we need to set the parameter `defaultVolumesToRestic` to `true`
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: backup-app03
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+    - application-03
+  defaultVolumesToRestic: true
+
+----
 
 [#app4]
 == Application 4
+
+The third demo will be an app based on Apache with a PVC attached, and we will be using using Snapshots and Data Mover for the the volume backups.
+
+1. Create a project called `application-04`
+
+----
+oc new-project application-04
+----
+
+2. Go to the Developer perspective in the OpenShift Console and follow the same procedure as in the previous demos.
+
+image::backups/app04-1.png[]
+
+3. Once the application is up and running, we need to attatch a PVC to it.
+
+image::backups/app04-2.png[]
+
+4. Create the backup.
+
+In this scenario, we first need to install the VolSync Operator. This can be done via the Operator Hub in Openshift:
+
+image::backups/app04-3.png[]
+
+Then, we need to edit the DataProtectionApplication resource in order to add the Data Mover functionality. 

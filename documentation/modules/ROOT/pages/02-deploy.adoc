@@ -1,7 +1,9 @@
 = Install and configure OADP Operator
 include::_attributes.adoc[]
 
-This section includes the necessary steps to start working on the webinar. This guide will begin with the installation and configuration of the OADP Operator. In order to perform backups and restores in OpenShift using this approach, you also need to have configured an object storage as backup location. The object storage can be on of the following:
+This section includes the necessary steps to start working on the webinar. This guide will begin with the installation and configuration of the OADP Operator. 
+
+In order to perform backups and restores in OpenShift using this approach, you also need to have configured an object storage as backup location. The object storage can be on of the following:
 
 - Amazon Web Services
 - Microsoft Azure
@@ -9,7 +11,12 @@ This section includes the necessary steps to start working on the webinar. This 
 - Multi Cloud Object Gateway
 - AWS S3 compatible object storage, such as Noobaa or Minio.
 
-In this workshop, the technology used will be 
+To perform the PVs backups with snapshots, we will need:
+
+- Amazon Web Services
+- Microsoft Azure
+- Google Cloud Platform
+- CSI snapshot-enabled cloud provider, such as OpenShift Container Storage (OCS) or OpenShift Data Foundation (ODF)
 
 [#install]
 == Install operator
@@ -31,7 +38,7 @@ Once the Operator is installed, we need to configure the object storage and crea
 
 We need to create a default secret with the credentials that allows the DataProtectionApplication to access the storage locations.
 
-Edit the file `credentials-velero` with the credentials of your storage location credentials.
+Edit the file `credentials-velero` with the credentials of your storage location.
 
 Create the Secret with the default name:
 
@@ -48,44 +55,38 @@ Edit the file `dpa.yaml` by adding the following parameters:
 - `velero.objectStorage`: This is the bucket that will be used to store the backups. 
 
 [source,yaml,subs="+macros,+attributes"]
+
 ----
-apiVersion: oadp.openshift.io/v1beta1
 kind: DataProtectionApplication
+apiVersion: oadp.openshift.io/v1alpha1
 metadata:
-  name: velero-sample
-  namespace: openshift-adp
+ name: velero-sample
+ namespace: openshift-adp
 spec:
-  configuration:
-    velero:
-      defaultPlugins:
-        - azure
-        - openshift 
-    restic:
-      enable: true 
-  backupLocations:
-    - velero:
-        config:
-          resourceGroup: <azure_resource_group> 
-          storageAccount: <azure_storage_account_id> 
-          subscriptionId: <azure_subscription_id> 
-          storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
+ backupLocations:
+   - velero:
+       config:
+         profile: "default"
+          region: nooobaa
+          s3Url: <url>
+          insecureSkipTLSVerify: "true"
+          s3ForcePathStyle: "true"
+        provider: aws
+        default: true
         credential:
           key: cloud
-          name: cloud-credentials  
-        provider: azure
-        default: true
+          name: cloud-credentials
         objectStorage:
-          bucket: <bucket_name> 
+          bucket: <bucket_name>
           prefix: velero
-  snapshotLocations: 
-    - velero:
-        config:
-          resourceGroup: <azure_resource_group>
-          subscriptionId: <azure_subscription_id>
-          incremental: "true"
-        name: default
-        provider: azure
-
+  configuration:
+   restic:
+     enable: true
+   velero:
+     defaultPlugins:
+       - openshift
+       - aws
+       - csi
 ----
 
 And then, create the object:
@@ -102,6 +103,29 @@ oc get all -n openshift-adp
 
 The output should be similar to this:
 
+---
+NAME                                                   READY   STATUS    RESTARTS   AGE
+pod/node-agent-bh22m                                   1/1     Running   0          31s
+pod/node-agent-p2sjt                                   1/1     Running   0          31s
+pod/node-agent-wtmm5                                   1/1     Running   0          31s
+pod/openshift-adp-controller-manager-f7b985677-n89ts   1/1     Running   0          6d5h
+pod/velero-7bb9f5f5bc-b5dkr                            1/1     Running   0          30s
 
+NAME                                                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/openshift-adp-controller-manager-metrics-service   ClusterIP   172.30.34.236    <none>        8443/TCP   6d5h
+service/openshift-adp-velero-metrics-svc                   ClusterIP   172.30.248.193   <none>        8085/TCP   32s
+
+NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+daemonset.apps/node-agent   3         3         3       3            3           <none>          32s
+
+NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/openshift-adp-controller-manager   1/1     1            1           6d5h
+deployment.apps/velero                             1/1     1            1           32s
+
+NAME                                                         DESIRED   CURRENT   READY   AGE
+replicaset.apps/openshift-adp-controller-manager-f7b985677   1         1         1       6d5h
+replicaset.apps/velero-7bb9f5f5bc                            1         1         1       32s
+
+---
 
 Now, we have everything configured so we can start to create our backups. 
