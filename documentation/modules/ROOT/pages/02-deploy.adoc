@@ -25,34 +25,39 @@ The OADP Operator can be installed through the Operator Hub as shown below:
 
 image::deploy/operator-install.png[]
 
+We will also need the VolSync Operator in order to perform the Data Mover feature. This can also be installed via the Operator Hub:
+
+image::deploy/volsync-install.png[]
+
 
 [#configure]
 == Configure Operator
 
-Once the Operator is installed, we need to configure the object storage and create a secret in OpenShift in order to be able to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object. 
+Once the Operator is installed, we need to have configured the object storage and a secret in OpenShift that contains the credentials needed to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object. 
 
 === Object Storage
 
 
 === Secret
 
-We need to create a default secret with the credentials that allows the DataProtectionApplication to access the storage locations.
+We need to create a default secret with the credentials that allows the `DataProtectionApplication` to access the storage locations.
 
 Edit the file `credentials-velero` with the credentials of your storage location.
 
 Create the Secret with the default name:
 
 ----
-oc create secret generic cloud-credentials -n openshift-adp --from-file cloud=credentials-velero
+oc create secret generic cloud-credentials-azure -n openshift-adp --from-file cloud=credentials-velero-azure
 ----
 
 === DataProtectionApplication
 
 Edit the file `dpa.yaml` by adding the following parameters:
 
-- `velero.config`: Complete these fields with the storage location configuration
+- `velero.config`: Complete these fields with the storage location configuration.
 - `credential.name`: Secret name created in the previous section.
 - `velero.objectStorage`: This is the bucket that will be used to store the backups. 
+- `features.datamover`: This section will be applied later on the workshop.  
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -63,30 +68,36 @@ metadata:
  name: velero-sample
  namespace: openshift-adp
 spec:
- backupLocations:
-   - velero:
-       config:
-         profile: "default"
-          region: nooobaa
-          s3Url: <url>
-          insecureSkipTLSVerify: "true"
-          s3ForcePathStyle: "true"
-        provider: aws
-        default: true
+  backupLocations:
+    - velero:
+        config:
+          resourceGroup: webinar-oadp
+          storageAccount: webinaroadp
+          storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
+          subscriptionId: <SUBSCRIPTION_ID>
         credential:
           key: cloud
-          name: cloud-credentials
+          name: cloud-credentials-azure
+        default: true
         objectStorage:
-          bucket: <bucket_name>
+          bucket: oadp
           prefix: velero
+        provider: azure
   configuration:
-   restic:
-     enable: true
-   velero:
-     defaultPlugins:
-       - openshift
-       - aws
-       - csi
+    restic:
+      enable: true
+    velero:
+      defaultPlugins:
+        - openshift
+        - azure
+        - csi
+  features:
+    dataMover:
+      credentialName: datamover-restic-secret
+      enable: false
+      maxConcurrentBackupVolumes: '3'
+      maxConcurrentRestoreVolumes: '3'
+      pruneInterval: '1'
 ----
 
 And then, create the object:
@@ -95,7 +106,65 @@ And then, create the object:
 oc apply -f dpa.yaml -n openshift-adp
 ----
 
-Finally, to check that everything has been installed correctly:
+==== Data Mover Prerequisites
+
+- Verify that both resources StorageClass and VolumeSnapshotClass support CSI
+
+- Check that there is just one default VolumeSnapshotClass.
+
+- The default VolumeSnapshotClass must have the `deletionPolicy` set to `Retain` and the label `velero.io/csi-volumesnapshot-class` set to `true`. This resould should look as follows:
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: snapshot.storage.k8s.io/v1
+deletionPolicy: Retain
+driver: openshift-storage.cephfs.csi.ceph.com
+kind: VolumeSnapshotClass
+metadata:
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "true"
+  labels:
+    velero.io/csi-volumesnapshot-class: "true"
+  name: ocs-storagecluster-cephfsplugin-snapclass
+parameters:
+  clusterID: openshift-storage
+  csi.storage.k8s.io/snapshotter-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/snapshotter-secret-namespace: openshift-storage
+
+----
+
+- The namespace where the OADP Operator is installed has to have the annotation:
+
+---
+oc annotate --overwrite namespace/openshift-adp volsync.backube/privileged-movers='true'
+---
+
+- Configure a Restic secret. 
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: restic-secret
+  namespace: openshift-adp
+type: Opaque
+stringData:
+# The repository encryption key
+  RESTIC_PASSWORD: restic-password
+ 
+----
+
+---
+oc apply -f restic-secret.yaml 
+---
+
+
+Finally, to check that everything has been deployed correctly:
 
 ----
 oc get all -n openshift-adp
@@ -127,5 +196,8 @@ replicaset.apps/openshift-adp-controller-manager-f7b985677   1         1        
 replicaset.apps/velero-7bb9f5f5bc                            1         1         1       32s
 
 ---
+
+And the DataProtectionApplication and BackupStorageLocation resources should be marked as `Available`.
+
 
 Now, we have everything configured so we can start to create our backups. 

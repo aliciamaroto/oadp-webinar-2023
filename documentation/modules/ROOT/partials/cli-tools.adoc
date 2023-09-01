@@ -9,8 +9,8 @@ Please have them installed and configured before you get started.
 | https://git-scm.com/download/mac[Download]
 | https://git-scm.com/download/linux[Download]
 
-| `Openshift client 4.12`
-| https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.12.25/openshift-client-mac-4.12.25.tar.gz[Download]
-| https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.12.25/openshift-client-linux-4.12.25.tar.gz[Download]
+| `Openshift client 4.13`
+| https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/openshift-client-mac-4.13.9.tar.gz[Download]
+| https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/openshift-client-linux-4.13.9.tar.gz[Download]
 
 |===
