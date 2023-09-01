@@ -187,9 +187,17 @@
 <div class="paragraph">
 <p>The OADP Operator can be installed through the Operator Hub as shown below:</p>
 </div>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="deploy/operator-install.png" alt="operator install">
+</div>
+</div>
+<div class="paragraph">
+<p>We will also need the VolSync Operator in order to perform the Data Mover feature. This can also be installed via the Operator Hub:</p>
+</div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/deploy/operator-install.png" alt="operator install">
+<img src="_images/deploy/volsync-install.png" alt="volsync install">
 </div>
 </div>
 </div>
@@ -198,7 +206,7 @@
 <h2 id="configure"><a class="anchor" href="#configure"></a>Configure Operator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Once the Operator is installed, we need to configure the object storage and create a secret in OpenShift in order to be able to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object.</p>
+<p>Once the Operator is installed, we need to have configured the object storage and a secret in OpenShift that contains the credentials needed to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object.</p>
 </div>
 <div class="sect2">
 <h3 id="_object_storage"><a class="anchor" href="#_object_storage"></a>Object Storage</h3>
@@ -207,7 +215,7 @@
 <div class="sect2">
 <h3 id="_secret"><a class="anchor" href="#_secret"></a>Secret</h3>
 <div class="paragraph">
-<p>We need to create a default secret with the credentials that allows the DataProtectionApplication to access the storage locations.</p>
+<p>We need to create a default secret with the credentials that allows the <code>DataProtectionApplication</code> to access the storage locations.</p>
 </div>
 <div class="paragraph">
 <p>Edit the file <code>credentials-velero</code> with the credentials of your storage location.</p>
@@ -217,7 +225,7 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>oc create secret generic cloud-credentials -n openshift-adp --from-file cloud=credentials-velero</pre>
+<pre>oc create secret generic cloud-credentials-azure -n openshift-adp --from-file cloud=credentials-velero-azure</pre>
 </div>
 </div>
 </div>
@@ -229,13 +237,16 @@
 <div class="ulist">
 <ul>
 <li>
-<p><code>velero.config</code>: Complete these fields with the storage location configuration</p>
+<p><code>velero.config</code>: Complete these fields with the storage location configuration.</p>
 </li>
 <li>
 <p><code>credential.name</code>: Secret name created in the previous section.</p>
 </li>
 <li>
 <p><code>velero.objectStorage</code>: This is the bucket that will be used to store the backups.</p>
+</li>
+<li>
+<p><code>features.datamover</code>: This section will be applied later on the workshop.</p>
 </li>
 </ul>
 </div>
@@ -247,30 +258,36 @@ metadata:
  name: velero-sample
  namespace: openshift-adp
 spec:
- backupLocations:
-   - velero:
-       config:
-         profile: "default"
-          region: nooobaa
-          s3Url: &lt;url&gt;
-          insecureSkipTLSVerify: "true"
-          s3ForcePathStyle: "true"
-        provider: aws
-        default: true
+  backupLocations:
+    - velero:
+        config:
+          resourceGroup: webinar-oadp
+          storageAccount: webinaroadp
+          storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
+          subscriptionId: &lt;SUBSCRIPTION_ID&gt;
         credential:
           key: cloud
-          name: cloud-credentials
+          name: cloud-credentials-azure
+        default: true
         objectStorage:
-          bucket: &lt;bucket_name&gt;
+          bucket: oadp
           prefix: velero
+        provider: azure
   configuration:
-   restic:
-     enable: true
-   velero:
-     defaultPlugins:
-       - openshift
-       - aws
-       - csi</code></pre>
+    restic:
+      enable: true
+    velero:
+      defaultPlugins:
+        - openshift
+        - azure
+        - csi
+  features:
+    dataMover:
+      credentialName: datamover-restic-secret
+      enable: false
+      maxConcurrentBackupVolumes: '3'
+      maxConcurrentRestoreVolumes: '3'
+      pruneInterval: '1'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -281,8 +298,78 @@ spec:
 <pre>oc apply -f dpa.yaml -n openshift-adp</pre>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_data_mover_prerequisites"><a class="anchor" href="#_data_mover_prerequisites"></a>Data Mover Prerequisites</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Verify that both resources StorageClass and VolumeSnapshotClass support CSI</p>
+</li>
+<li>
+<p>Check that there is just one default VolumeSnapshotClass.</p>
+</li>
+<li>
+<p>The default VolumeSnapshotClass must have the <code>deletionPolicy</code> set to <code>Retain</code> and the label <code>velero.io/csi-volumesnapshot-class</code> set to <code>true</code>. This resould should look as follows:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: snapshot.storage.k8s.io/v1
+deletionPolicy: Retain
+driver: openshift-storage.cephfs.csi.ceph.com
+kind: VolumeSnapshotClass
+metadata:
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "true"
+  labels:
+    velero.io/csi-volumesnapshot-class: "true"
+  name: ocs-storagecluster-cephfsplugin-snapclass
+parameters:
+  clusterID: openshift-storage
+  csi.storage.k8s.io/snapshotter-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/snapshotter-secret-namespace: openshift-storage</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The namespace where the OADP Operator is installed has to have the annotation:</p>
+</li>
+</ul>
+</div>
+<hr>
 <div class="paragraph">
-<p>Finally, to check that everything has been installed correctly:</p>
+<p>oc annotate --overwrite namespace/openshift-adp volsync.backube/privileged-movers='true'
+---</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Configure a Restic secret.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: restic-secret
+  namespace: openshift-adp
+type: Opaque
+stringData:
+# The repository encryption key
+  RESTIC_PASSWORD: restic-password</code></pre>
+</div>
+</div>
+<hr>
+<div class="paragraph">
+<p>oc apply -f restic-secret.yaml
+---</p>
+</div>
+<div class="paragraph">
+<p>Finally, to check that everything has been deployed correctly:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -322,7 +409,11 @@ replicaset.apps/velero-7bb9f5f5bc                            1         1        
 </div>
 <hr>
 <div class="paragraph">
+<p>And the DataProtectionApplication and BackupStorageLocation resources should be marked as <code>Available</code>.</p>
+</div>
+<div class="paragraph">
 <p>Now, we have everything configured so we can start to create our backups.</p>
+</div>
 </div>
 </div>
 </div>
