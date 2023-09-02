@@ -158,8 +158,51 @@ image::backups/app04-1.png[]
 
 image::backups/app04-2.png[]
 
-4. Create the backup.
+4. Before creating this backup, we need to enable the Data Mover feature in the DataProtectionApplication resource. This is done by adding the `vsm` plugin and setting the Data Mover feature to `true`:
 
+[source,yaml,subs="+macros,+attributes"]
+
+----
+kind: DataProtectionApplication
+apiVersion: oadp.openshift.io/v1alpha1
+metadata:
+ name: velero-sample
+ namespace: openshift-adp
+spec:
+  backupLocations:
+    - velero:
+        config:
+          resourceGroup: <RESOURCE_GROUP>
+          storageAccount: <STORAGE_ACCOUNT>
+          storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
+          subscriptionId: <SUBSCRIPTION_ID>
+        credential:
+          key: cloud
+          name: cloud-credentials-azure
+        default: true
+        objectStorage:
+          bucket: <BUCKET_NAME>
+          prefix: velero
+        provider: azure
+  configuration:
+    restic:
+      enable: true
+    velero:
+      defaultPlugins:
+        - openshift
+        - azure
+        - csi
+        - vsm
+  features:
+    dataMover:
+      credentialName: datamover-restic-secret
+      enable: true
+      maxConcurrentBackupVolumes: '3'
+      maxConcurrentRestoreVolumes: '3'
+      pruneInterval: '1'
+----
+
+Create the backup.
 
 
 [source,yaml,subs="+macros,+attributes"]

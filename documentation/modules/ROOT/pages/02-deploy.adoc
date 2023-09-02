@@ -23,7 +23,7 @@ To perform the PVs backups with snapshots, we will need:
 
 The OADP Operator can be installed through the Operator Hub as shown below:
 
-image::deploy/operator-install.png[]
+image::deploy/oadp-install.png[]
 
 We will also need the VolSync Operator in order to perform the Data Mover feature. This can also be installed via the Operator Hub:
 
@@ -35,24 +35,35 @@ image::deploy/volsync-install.png[]
 
 Once the Operator is installed, we need to have configured the object storage and a secret in OpenShift that contains the credentials needed to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object. 
 
-=== Object Storage
-
-
 === Secret
 
-We need to create a default secret with the credentials that allows the `DataProtectionApplication` to access the storage locations.
+We have to create a default secret with the storage location credentials that will allow the `DataProtectionApplication` to access the storage location.
 
-Edit the file `credentials-velero` with the credentials of your storage location.
+Create a file `credentials-velero` with the credentials of your storage location. In Azure Blob, it will look like: 
+
+----
+AZURE_SUBSCRIPTION_ID=<subscription_id>
+AZURE_TENANT_ID=<tenant_id>
+AZURE_CLIENT_ID=<client_id>
+AZURE_CLIENT_SECRET=<client_password>
+AZURE_RESOURCE_GROUP=<resource_group>
+AZURE_STORAGE_ACCOUNT_ACCESS_KEY=<storage_account_access_key>
+AZURE_CLOUD_NAME=<azure_cloud_name>
+----
 
 Create the Secret with the default name:
 
 ----
-oc create secret generic cloud-credentials-azure -n openshift-adp --from-file cloud=credentials-velero-azure
+oc create secret generic cloud-credentials-azure -n openshift-adp --from-file cloud=credentials-velero
 ----
 
 === DataProtectionApplication
 
-Edit the file `dpa.yaml` by adding the following parameters:
+Create a new `DataProtectionApplication` resource. It can be done via web console, in the OADP Operator:
+
+image::deploy/create-dpa.png[]
+
+The resource should look as follows: 
 
 - `velero.config`: Complete these fields with the storage location configuration.
 - `credential.name`: Secret name created in the previous section.
@@ -71,8 +82,8 @@ spec:
   backupLocations:
     - velero:
         config:
-          resourceGroup: webinar-oadp
-          storageAccount: webinaroadp
+          resourceGroup: <RESOURCE_GROUP>
+          storageAccount: <STORAGE_ACCOUNT>
           storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
           subscriptionId: <SUBSCRIPTION_ID>
         credential:
@@ -80,7 +91,7 @@ spec:
           name: cloud-credentials-azure
         default: true
         objectStorage:
-          bucket: oadp
+          bucket: <BUCKET_NAME>
           prefix: velero
         provider: azure
   configuration:
@@ -100,19 +111,13 @@ spec:
       pruneInterval: '1'
 ----
 
-And then, create the object:
+=== Data Mover Prerequisites
 
-----
-oc apply -f dpa.yaml -n openshift-adp
-----
-
-==== Data Mover Prerequisites
-
-- Verify that both resources StorageClass and VolumeSnapshotClass support CSI
+- Verify that both resources StorageClass and VolumeSnapshotClass support CSI.
 
 - Check that there is just one default VolumeSnapshotClass.
 
-- The default VolumeSnapshotClass must have the `deletionPolicy` set to `Retain` and the label `velero.io/csi-volumesnapshot-class` set to `true`. This resould should look as follows:
+- The default VolumeSnapshotClass must have the `deletionPolicy` set to `Retain` and the label `velero.io/csi-volumesnapshot-class` set to `true`. This resource should look as follows:
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -137,9 +142,9 @@ parameters:
 
 - The namespace where the OADP Operator is installed has to have the annotation:
 
----
+----
 oc annotate --overwrite namespace/openshift-adp volsync.backube/privileged-movers='true'
----
+----
 
 - Configure a Restic secret. 
 
@@ -159,9 +164,9 @@ stringData:
  
 ----
 
----
+----
 oc apply -f restic-secret.yaml 
----
+----
 
 
 Finally, to check that everything has been deployed correctly:
@@ -172,7 +177,8 @@ oc get all -n openshift-adp
 
 The output should be similar to this:
 
----
+----
+
 NAME                                                   READY   STATUS    RESTARTS   AGE
 pod/node-agent-bh22m                                   1/1     Running   0          31s
 pod/node-agent-p2sjt                                   1/1     Running   0          31s
@@ -195,9 +201,9 @@ NAME                                                         DESIRED   CURRENT  
 replicaset.apps/openshift-adp-controller-manager-f7b985677   1         1         1       6d5h
 replicaset.apps/velero-7bb9f5f5bc                            1         1         1       32s
 
----
+----
 
-And the DataProtectionApplication and BackupStorageLocation resources should be marked as `Available`.
+And the `DataProtectionApplication` and `BackupStorageLocation` resources should be marked as `Available`.
 
 
 Now, we have everything configured so we can start to create our backups. 

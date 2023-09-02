@@ -11,19 +11,9 @@ include::../partials/cli-tools.adoc[]
 
 :profile: my_profile
 
-[#downloadtutorial]
-== Get tutorial sources
+Before starting this workshop, we need to have the following environment running:
 
-Before we start setting up the environment, please fork the `Git` repository into your personal `Github` Account as follows:
+- OpenShift 4 cluster. We will be using an OpenShift 4.13 version.
+- OpenShift Data Foundation. 
+- Object Storage as Backup location. In this workshop we will use Azure Blob as external storage location.
 
-* Access the https://github.com/aliciamaroto/oadp-webinar-2023-lab/[OADP Repository]
-* Fork it on your GitHub account. If prompted, choose to fork only the `main` branch.
-* Clone the repository to your local machine. You can use both SSH and HTTPS URLs. If you have already configured your SSH keys, use this mechanism. If not, use HTTPS.
-
-[.lines_space]
-[.console-input]
-[source,bash, subs="+macros,+attributes"]
-----
-git clone https://github.com/<your_github_account>/oadp-webinar-2023-lab
-cd oadp-webinar-2023-lab
-----

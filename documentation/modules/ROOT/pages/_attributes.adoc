@@ -1,2 +1,2 @@
 :experimental:
-:source-highlighter: highlightjs
+:source-highlighter: highlights
