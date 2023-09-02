@@ -405,9 +405,53 @@ spec:
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create the backup.</p>
+<p>Before creating this backup, we need to enable the Data Mover feature in the DataProtectionApplication resource. This is done by adding the <code>vsm</code> plugin and setting the Data Mover feature to <code>true</code>:</p>
 </li>
 </ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">kind: DataProtectionApplication
+apiVersion: oadp.openshift.io/v1alpha1
+metadata:
+ name: velero-sample
+ namespace: openshift-adp
+spec:
+  backupLocations:
+    - velero:
+        config:
+          resourceGroup: &lt;RESOURCE_GROUP&gt;
+          storageAccount: &lt;STORAGE_ACCOUNT&gt;
+          storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
+          subscriptionId: &lt;SUBSCRIPTION_ID&gt;
+        credential:
+          key: cloud
+          name: cloud-credentials-azure
+        default: true
+        objectStorage:
+          bucket: &lt;BUCKET_NAME&gt;
+          prefix: velero
+        provider: azure
+  configuration:
+    restic:
+      enable: true
+    velero:
+      defaultPlugins:
+        - openshift
+        - azure
+        - csi
+        - vsm
+  features:
+    dataMover:
+      credentialName: datamover-restic-secret
+      enable: true
+      maxConcurrentBackupVolumes: '3'
+      maxConcurrentRestoreVolumes: '3'
+      pruneInterval: '1'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create the backup.</p>
 </div>
 <div class="listingblock">
 <div class="content">

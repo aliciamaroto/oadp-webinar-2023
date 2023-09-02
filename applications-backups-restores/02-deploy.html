@@ -187,9 +187,9 @@
 <div class="paragraph">
 <p>The OADP Operator can be installed through the Operator Hub as shown below:</p>
 </div>
-<div class="imageblock unresolved">
+<div class="imageblock">
 <div class="content">
-<img src="deploy/operator-install.png" alt="operator install">
+<img src="_images/deploy/oadp-install.png" alt="oadp install">
 </div>
 </div>
 <div class="paragraph">
@@ -209,30 +209,45 @@
 <p>Once the Operator is installed, we need to have configured the object storage and a secret in OpenShift that contains the credentials needed to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object.</p>
 </div>
 <div class="sect2">
-<h3 id="_object_storage"><a class="anchor" href="#_object_storage"></a>Object Storage</h3>
-
-</div>
-<div class="sect2">
 <h3 id="_secret"><a class="anchor" href="#_secret"></a>Secret</h3>
 <div class="paragraph">
-<p>We need to create a default secret with the credentials that allows the <code>DataProtectionApplication</code> to access the storage locations.</p>
+<p>We have to create a default secret with the storage location credentials that will allow the <code>DataProtectionApplication</code> to access the storage location.</p>
 </div>
 <div class="paragraph">
-<p>Edit the file <code>credentials-velero</code> with the credentials of your storage location.</p>
+<p>Create a file <code>credentials-velero</code> with the credentials of your storage location. In Azure Blob, it will look like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>AZURE_SUBSCRIPTION_ID=&lt;subscription_id&gt;
+AZURE_TENANT_ID=&lt;tenant_id&gt;
+AZURE_CLIENT_ID=&lt;client_id&gt;
+AZURE_CLIENT_SECRET=&lt;client_password&gt;
+AZURE_RESOURCE_GROUP=&lt;resource_group&gt;
+AZURE_STORAGE_ACCOUNT_ACCESS_KEY=&lt;storage_account_access_key&gt;
+AZURE_CLOUD_NAME=&lt;azure_cloud_name&gt;</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Create the Secret with the default name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>oc create secret generic cloud-credentials-azure -n openshift-adp --from-file cloud=credentials-velero-azure</pre>
+<pre>oc create secret generic cloud-credentials-azure -n openshift-adp --from-file cloud=credentials-velero</pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_dataprotectionapplication"><a class="anchor" href="#_dataprotectionapplication"></a>DataProtectionApplication</h3>
 <div class="paragraph">
-<p>Edit the file <code>dpa.yaml</code> by adding the following parameters:</p>
+<p>Create a new <code>DataProtectionApplication</code> resource. It can be done via web console, in the OADP Operator:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/deploy/create-dpa.png" alt="create dpa">
+</div>
+</div>
+<div class="paragraph">
+<p>The resource should look as follows:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -261,8 +276,8 @@ spec:
   backupLocations:
     - velero:
         config:
-          resourceGroup: webinar-oadp
-          storageAccount: webinaroadp
+          resourceGroup: &lt;RESOURCE_GROUP&gt;
+          storageAccount: &lt;STORAGE_ACCOUNT&gt;
           storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
           subscriptionId: &lt;SUBSCRIPTION_ID&gt;
         credential:
@@ -270,7 +285,7 @@ spec:
           name: cloud-credentials-azure
         default: true
         objectStorage:
-          bucket: oadp
+          bucket: &lt;BUCKET_NAME&gt;
           prefix: velero
         provider: azure
   configuration:
@@ -290,26 +305,19 @@ spec:
       pruneInterval: '1'</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>And then, create the object:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>oc apply -f dpa.yaml -n openshift-adp</pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_data_mover_prerequisites"><a class="anchor" href="#_data_mover_prerequisites"></a>Data Mover Prerequisites</h4>
+<div class="sect2">
+<h3 id="_data_mover_prerequisites"><a class="anchor" href="#_data_mover_prerequisites"></a>Data Mover Prerequisites</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>Verify that both resources StorageClass and VolumeSnapshotClass support CSI</p>
+<p>Verify that both resources StorageClass and VolumeSnapshotClass support CSI.</p>
 </li>
 <li>
 <p>Check that there is just one default VolumeSnapshotClass.</p>
 </li>
 <li>
-<p>The default VolumeSnapshotClass must have the <code>deletionPolicy</code> set to <code>Retain</code> and the label <code>velero.io/csi-volumesnapshot-class</code> set to <code>true</code>. This resould should look as follows:</p>
+<p>The default VolumeSnapshotClass must have the <code>deletionPolicy</code> set to <code>Retain</code> and the label <code>velero.io/csi-volumesnapshot-class</code> set to <code>true</code>. This resource should look as follows:</p>
 </li>
 </ul>
 </div>
@@ -338,10 +346,10 @@ parameters:
 </li>
 </ul>
 </div>
-<hr>
-<div class="paragraph">
-<p>oc annotate --overwrite namespace/openshift-adp volsync.backube/privileged-movers='true'
----</p>
+<div class="listingblock">
+<div class="content">
+<pre>oc annotate --overwrite namespace/openshift-adp volsync.backube/privileged-movers='true'</pre>
+</div>
 </div>
 <div class="ulist">
 <ul>
@@ -363,10 +371,10 @@ stringData:
   RESTIC_PASSWORD: restic-password</code></pre>
 </div>
 </div>
-<hr>
-<div class="paragraph">
-<p>oc apply -f restic-secret.yaml
----</p>
+<div class="listingblock">
+<div class="content">
+<pre>oc apply -f restic-secret.yaml</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Finally, to check that everything has been deployed correctly:</p>
@@ -379,41 +387,36 @@ stringData:
 <div class="paragraph">
 <p>The output should be similar to this:</p>
 </div>
-<hr>
-<div class="paragraph">
-<p>NAME                                                   READY   STATUS    RESTARTS   AGE
+<div class="listingblock">
+<div class="content">
+<pre>NAME                                                   READY   STATUS    RESTARTS   AGE
 pod/node-agent-bh22m                                   1/1     Running   0          31s
 pod/node-agent-p2sjt                                   1/1     Running   0          31s
 pod/node-agent-wtmm5                                   1/1     Running   0          31s
 pod/openshift-adp-controller-manager-f7b985677-n89ts   1/1     Running   0          6d5h
-pod/velero-7bb9f5f5bc-b5dkr                            1/1     Running   0          30s</p>
-</div>
-<div class="paragraph">
-<p>NAME                                                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+pod/velero-7bb9f5f5bc-b5dkr                            1/1     Running   0          30s
+
+NAME                                                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
 service/openshift-adp-controller-manager-metrics-service   ClusterIP   172.30.34.236    &lt;none&gt;        8443/TCP   6d5h
-service/openshift-adp-velero-metrics-svc                   ClusterIP   172.30.248.193   &lt;none&gt;        8085/TCP   32s</p>
-</div>
-<div class="paragraph">
-<p>NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
-daemonset.apps/node-agent   3         3         3       3            3           &lt;none&gt;          32s</p>
-</div>
-<div class="paragraph">
-<p>NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
+service/openshift-adp-velero-metrics-svc                   ClusterIP   172.30.248.193   &lt;none&gt;        8085/TCP   32s
+
+NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+daemonset.apps/node-agent   3         3         3       3            3           &lt;none&gt;          32s
+
+NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/openshift-adp-controller-manager   1/1     1            1           6d5h
-deployment.apps/velero                             1/1     1            1           32s</p>
-</div>
-<div class="paragraph">
-<p>NAME                                                         DESIRED   CURRENT   READY   AGE
+deployment.apps/velero                             1/1     1            1           32s
+
+NAME                                                         DESIRED   CURRENT   READY   AGE
 replicaset.apps/openshift-adp-controller-manager-f7b985677   1         1         1       6d5h
-replicaset.apps/velero-7bb9f5f5bc                            1         1         1       32s</p>
+replicaset.apps/velero-7bb9f5f5bc                            1         1         1       32s</pre>
 </div>
-<hr>
+</div>
 <div class="paragraph">
-<p>And the DataProtectionApplication and BackupStorageLocation resources should be marked as <code>Available</code>.</p>
+<p>And the <code>DataProtectionApplication</code> and <code>BackupStorageLocation</code> resources should be marked as <code>Available</code>.</p>
 </div>
 <div class="paragraph">
 <p>Now, we have everything configured so we can start to create our backups.</p>
-</div>
 </div>
 </div>
 </div>

@@ -148,23 +148,16 @@
 <col style="width: 33.3333%;">
 <col style="width: 33.3334%;">
 </colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top"><strong>Tool</strong></th>
-<th class="tableblock halign-left valign-top"><strong>macOS</strong></th>
-<th class="tableblock halign-left valign-top"><strong>Linux/Fedora</strong></th>
-</tr>
-</thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Git</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/mac">Download</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://git-scm.com/download/linux">Download</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Tool</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>macOS</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Linux/Fedora</strong></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Openshift client 4.13</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/openshift-client-mac-4.13.9.tar.gz">Download</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/openshift-client-linux-4.13.9.tar.gz">Download</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -173,33 +166,21 @@
 <div class="sect1">
 <h2 id="clustersetup"><a class="anchor" href="#clustersetup"></a>Setup OpenShift Cluster</h2>
 <div class="sectionbody">
-
-</div>
-</div>
-<div class="sect1">
-<h2 id="downloadtutorial"><a class="anchor" href="#downloadtutorial"></a>Get tutorial sources</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Before we start setting up the environment, please fork the <code>Git</code> repository into your personal <code>Github</code> Account as follows:</p>
+<p>Before starting this workshop, we need to have the following environment running:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Access the <a href="https://github.com/aliciamaroto/oadp-webinar-2023-lab/">OADP Repository</a></p>
+<p>OpenShift 4 cluster. We will be using an OpenShift 4.13 version.</p>
 </li>
 <li>
-<p>Fork it on your GitHub account. If prompted, choose to fork only the <code>main</code> branch.</p>
+<p>OpenShift Data Foundation.</p>
 </li>
 <li>
-<p>Clone the repository to your local machine. You can use both SSH and HTTPS URLs. If you have already configured your SSH keys, use this mechanism. If not, use HTTPS.</p>
+<p>Object Storage as Backup location. In this workshop we will use Azure Blob as external storage location.</p>
 </li>
 </ul>
-</div>
-<div class="listingblock lines_space console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/&lt;your_github_account&gt;/oadp-webinar-2023-lab" class="bare">https://github.com/&lt;your_github_account&gt;/oadp-webinar-2023-lab</a>
-cd oadp-webinar-2023-lab</code></pre>
-</div>
 </div>
 </div>
 </div>
