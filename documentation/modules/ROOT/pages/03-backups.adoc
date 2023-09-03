@@ -2,6 +2,8 @@
 
 In this section we are going to test different scenarios when performing backups. We will be creating four different applications with different features and then we will back them up.
 
+image::backups/backup.png[]
+
 [#app1]
 == Application 1
 
@@ -25,7 +27,8 @@ image::backups/app01-2.png[]
 
 image::backups/app01-3.png[]
 
-Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section.
+Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section. The yaml view of the resource will look like this:
+
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -64,24 +67,7 @@ image::backups/app02-2.png[]
 
 4. Create the backup.
 
-When performing a backup using snapshots, we first need to edit the resource `VolumeSnapshotClass` to be as follows:
-
-[source,yaml,subs="+macros,+attributes"]
-
-----
-
-apiVersion: snapshot.storage.k8s.io/v1
-kind: VolumeSnapshotClass
-metadata:
-  name: <volume_snapshot_class_name>
-  labels:
-    velero.io/csi-volumesnapshot-class: "true"
-driver: <csi_driver>
-deletionPolicy: Retain
-
-----
-
-Then, we can proceed to create the backup, making sure to set the `snapshotVolumes` parameter to `true`.
+Then, we can proceed to create the backup. In this case, we have to make sure to set the `snapshotVolumes` parameter to `true`. The yaml view of the resource will look like this:
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -121,7 +107,7 @@ image::backups/app03-2.png[]
 
 4. Create the backup.
 
-In this case, we need to set the parameter `defaultVolumesToRestic` to `true`
+In this case, we need to set the parameter `defaultVolumesToRestic` to `true`. The yaml view of the resource will look like this:
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -202,7 +188,7 @@ spec:
       pruneInterval: '1'
 ----
 
-Create the backup.
+5. Create the backup, setting the `snapshotVolumes` parameter to `true`. The yaml view of the resource will look like this:
 
 
 [source,yaml,subs="+macros,+attributes"]

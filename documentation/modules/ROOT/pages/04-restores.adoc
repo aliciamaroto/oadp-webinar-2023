@@ -1,19 +1,110 @@
 = Restore Applications
 
-In this last section we are going to perform the restores of the previous backed up applications. 
+In this last section we are going to perform the restores of the previous backed up applications. In order to check that the restores of the backups have been done successfully, we ned to simulate a disaster scenario. To do so, we are going to delete the namespaces created in the previous section.
+
+image::restores/restore.png[]
+
 
 [#simple]
 == Restore simple application
+
+1. Firstly, delete the `application-01` namespace.
+
+----
+oc delete project application-01
+----
+
+2. Create a new Restore resource, specifying the namespace we want to restore. The yaml view of the resource will look like this:
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-app01
+  namespace: openshift-adp
+spec:
+  backupName: backup-app01
+
+----
 
 
 [#snapshot]
 == Restore application with persistent storage using Snaphsots
 
+1. Firstly, delete the `application-02` namespace.
 
+----
+oc delete project application-02
+----
+
+2. Create a new Restore resource, specifying the namespace we want to restore and making sure that the option `restorePVs` is set to `true`. The yaml view of the resource will look like this:
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-app02
+  namespace: openshift-adp
+spec:
+  backupName: backup-app02
+  restorePVs: true
+
+----
 
 [#restic]
 == Restore application with persistent storage using Restic
 
+1. Firstly, delete the `application-03` namespace.
+
+----
+oc delete project application-03
+----
+
+2. Create a new Restore resource, specifying the namespace we want to restore. In this case, we do not have to enable the `restorePVs` option as we performed the backup using `Restic`. The yaml view of the resource will look like this:
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-app03
+  namespace: openshift-adp
+spec:
+  backupName: backup-app03
+
+----
+
 
 [#datamover]
 == Restore application with persistent storage using Data Mover
+
+1. Firstly, delete the `application-04` namespace.
+
+----
+oc delete project application-04
+----
+
+2. Create a new Restore resource, specifying the namespace we want to restore and making sure that the option `restorePVs` is set to `true` as in the second example. The yaml view of the resource will look like this:
+
+[source,yaml,subs="+macros,+attributes"]
+
+----
+
+apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-app04
+  namespace: openshift-adp
+spec:
+  backupName: backup-app04
+  restorePVs: true
+
+----
