@@ -135,32 +135,155 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>In this last section we are going to perform the restores of the previous backed up applications.</p>
+<p>In this last section we are going to perform the restores of the previous backed up applications. In order to check that the restores of the backups have been done successfully, we ned to simulate a disaster scenario. To do so, we are going to delete the namespaces created in the previous section.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/restores/restore.png" alt="restore">
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="simple"><a class="anchor" href="#simple"></a>Restore simple application</h2>
 <div class="sectionbody">
-
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Firstly, delete the <code>application-01</code> namespace.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc delete project application-01</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new Restore resource, specifying the namespace we want to restore. The yaml view of the resource will look like this:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-app01
+  namespace: openshift-adp
+spec:
+  backupName: backup-app01</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="snapshot"><a class="anchor" href="#snapshot"></a>Restore application with persistent storage using Snaphsots</h2>
 <div class="sectionbody">
-
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Firstly, delete the <code>application-02</code> namespace.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc delete project application-02</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new Restore resource, specifying the namespace we want to restore and making sure that the option <code>restorePVs</code> is set to <code>true</code>. The yaml view of the resource will look like this:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-app02
+  namespace: openshift-adp
+spec:
+  backupName: backup-app02
+  restorePVs: true</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="restic"><a class="anchor" href="#restic"></a>Restore application with persistent storage using Restic</h2>
 <div class="sectionbody">
-
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Firstly, delete the <code>application-03</code> namespace.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc delete project application-03</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new Restore resource, specifying the namespace we want to restore. In this case, we do not have to enable the <code>restorePVs</code> option as we performed the backup using <code>Restic</code>. The yaml view of the resource will look like this:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-app03
+  namespace: openshift-adp
+spec:
+  backupName: backup-app03</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="datamover"><a class="anchor" href="#datamover"></a>Restore application with persistent storage using Data Mover</h2>
 <div class="sectionbody">
-
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Firstly, delete the <code>application-04</code> namespace.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oc delete project application-04</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new Restore resource, specifying the namespace we want to restore and making sure that the option <code>restorePVs</code> is set to <code>true</code> as in the second example. The yaml view of the resource will look like this:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-app04
+  namespace: openshift-adp
+spec:
+  backupName: backup-app04
+  restorePVs: true</code></pre>
+</div>
+</div>
 </div>
 </div>
 <nav class="pagination">

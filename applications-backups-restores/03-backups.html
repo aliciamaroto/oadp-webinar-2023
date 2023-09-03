@@ -138,6 +138,11 @@
 <div class="paragraph">
 <p>In this section we are going to test different scenarios when performing backups. We will be creating four different applications with different features and then we will back them up.</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/backup.png" alt="backup">
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -195,7 +200,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section.</p>
+<p>Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section. The yaml view of the resource will look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -261,22 +266,7 @@ spec:
 </ol>
 </div>
 <div class="paragraph">
-<p>When performing a backup using snapshots, we first need to edit the resource <code>VolumeSnapshotClass</code> to be as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: snapshot.storage.k8s.io/v1
-kind: VolumeSnapshotClass
-metadata:
-  name: &lt;volume_snapshot_class_name&gt;
-  labels:
-    velero.io/csi-volumesnapshot-class: "true"
-driver: &lt;csi_driver&gt;
-deletionPolicy: Retain</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Then, we can proceed to create the backup, making sure to set the <code>snapshotVolumes</code> parameter to <code>true</code>.</p>
+<p>Then, we can proceed to create the backup. In this case, we have to make sure to set the <code>snapshotVolumes</code> parameter to <code>true</code>. The yaml view of the resource will look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -343,7 +333,7 @@ spec:
 </ol>
 </div>
 <div class="paragraph">
-<p>In this case, we need to set the parameter <code>defaultVolumesToRestic</code> to <code>true</code></p>
+<p>In this case, we need to set the parameter <code>defaultVolumesToRestic</code> to <code>true</code>. The yaml view of the resource will look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -450,8 +440,12 @@ spec:
       pruneInterval: '1'</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Create the backup.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create the backup, setting the <code>snapshotVolumes</code> parameter to <code>true</code>. The yaml view of the resource will look like this:</p>
+</li>
+</ol>
 </div>
 <div class="listingblock">
 <div class="content">
