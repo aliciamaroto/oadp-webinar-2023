@@ -164,9 +164,9 @@
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="2">
 <li>
-<p>Go to the Developer perspective in the OpenShift Console</p>
+<p>Go to the Developer perspective in the OpenShift Console.</p>
 </li>
 </ol>
 </div>
@@ -176,9 +176,9 @@
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="3">
 <li>
-<p>In the developer catalogue choose the application <strong>Apache HTTP Server (httpd)</strong></p>
+<p>In the developer catalogue choose the application <strong>Apache HTTP Server (httpd)</strong> <em>Builder image</em>.</p>
 </li>
 </ol>
 </div>
@@ -188,9 +188,9 @@
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="4">
 <li>
-<p>Fill the <code>Git Repo URL</code> by pressing <code>Try sample</code> and the <code>Name</code> with the desired application name and then click on <strong>Create</strong></p>
+<p>Fill the <code>Git Repo URL</code> by pressing <code>Try sample</code> and the <code>Name</code> with the desired application name and then click on <strong>Create</strong>.</p>
 </li>
 </ol>
 </div>
@@ -235,7 +235,7 @@ spec:
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="2">
 <li>
 <p>Go to the Developer perspective in the OpenShift Console and follow the same procedure as in application 01.</p>
 </li>
@@ -247,9 +247,9 @@ spec:
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="3">
 <li>
-<p>Once the application is up and running, we need to attatch a PVC to it.</p>
+<p>Once the application is up and running, we need to attach a PVC to it.</p>
 </li>
 </ol>
 </div>
@@ -258,8 +258,16 @@ spec:
 <img src="_images/backups/app02-2.png" alt="app02 2">
 </div>
 </div>
+<div class="paragraph">
+<p>And create a new Persistent Volume Claim for this application.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app02-3.png" alt="app02 3">
+</div>
+</div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="4">
 <li>
 <p>Create the backup.</p>
 </li>
@@ -287,7 +295,7 @@ spec:
 <h2 id="app3"><a class="anchor" href="#app3"></a>Application 3</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The third demo will be an app based on Apache with a PVC attached, and we will be using Restic to perform the volume backups.</p>
+<p>The third demo will be an app based on Apache with a PVC attached, and we will be using <code>Restic</code> to perform the volume backups.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -302,7 +310,7 @@ spec:
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="2">
 <li>
 <p>Go to the Developer perspective in the OpenShift Console and follow the same procedure as in application 01 and 02.</p>
 </li>
@@ -314,9 +322,9 @@ spec:
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="3">
 <li>
-<p>Once the application is up and running, we need to attatch a PVC to it.</p>
+<p>Once the application is up and running, we need to attach a PVC to it.</p>
 </li>
 </ol>
 </div>
@@ -326,14 +334,14 @@ spec:
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="4">
 <li>
 <p>Create the backup.</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>In this case, we need to set the parameter <code>defaultVolumesToRestic</code> to <code>true</code>. The yaml view of the resource will look like this:</p>
+<p>In this case, we need to set the parameter <code>defaultVolumesToFsBackup</code> to <code>true</code>. The yaml view of the resource will look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -345,7 +353,7 @@ metadata:
 spec:
   includedNamespaces:
     - application-03
-  defaultVolumesToRestic: true</code></pre>
+  defaultVolumesToFsBackup: true</code></pre>
 </div>
 </div>
 </div>
@@ -369,7 +377,7 @@ spec:
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="2">
 <li>
 <p>Go to the Developer perspective in the OpenShift Console and follow the same procedure as in the previous demos.</p>
 </li>
@@ -381,9 +389,9 @@ spec:
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="3">
 <li>
-<p>Once the application is up and running, we need to attatch a PVC to it.</p>
+<p>Once the application is up and running, we need to attach a PVC to it.</p>
 </li>
 </ol>
 </div>
@@ -393,9 +401,9 @@ spec:
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="4">
 <li>
-<p>Before creating this backup, we need to enable the Data Mover feature in the DataProtectionApplication resource. This is done by adding the <code>vsm</code> plugin and setting the Data Mover feature to <code>true</code>:</p>
+<p>Before creating this backup, we need to enable the Data Mover feature in the <code>DataProtectionApplication</code> resource. This is done by adding the <code>vsm</code> plugin and setting the Data Mover feature to <code>true</code>:</p>
 </li>
 </ol>
 </div>
@@ -430,18 +438,18 @@ spec:
         - openshift
         - azure
         - csi
-        - vsm
+        - *vsm*
   features:
     dataMover:
       credentialName: datamover-restic-secret
-      enable: true
+      *enable: true*
       maxConcurrentBackupVolumes: '3'
       maxConcurrentRestoreVolumes: '3'
       pruneInterval: '1'</code></pre>
 </div>
 </div>
 <div class="olist arabic">
-<ol class="arabic">
+<ol class="arabic" start="5">
 <li>
 <p>Create the backup, setting the <code>snapshotVolumes</code> parameter to <code>true</code>. The yaml view of the resource will look like this:</p>
 </li>
