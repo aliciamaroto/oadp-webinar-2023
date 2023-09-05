@@ -438,11 +438,11 @@ spec:
         - openshift
         - azure
         - csi
-        - *vsm*
+        - vsm
   features:
     dataMover:
       credentialName: datamover-restic-secret
-      *enable: true*
+      enable: true
       maxConcurrentBackupVolumes: '3'
       maxConcurrentRestoreVolumes: '3'
       pruneInterval: '1'</code></pre>
