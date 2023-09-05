@@ -14,16 +14,19 @@ The first application will be a simple application based on Apache. We can creat
 ----
 oc new-project application-01
 ----
-
-2. Go to the Developer perspective in the OpenShift Console
+[start=2]
+2. Go to the Developer perspective in the OpenShift Console.
 
 image::backups/app01-1.png[]
 
-3. In the developer catalogue choose the application *Apache HTTP Server (httpd)* 
+[start=3]
+3. In the developer catalogue choose the application *Apache HTTP Server (httpd)* _Builder image_. 
 
 image::backups/app01-2.png[]
 
-4. Fill the `Git Repo URL` by pressing `Try sample` and the `Name` with the desired application name and then click on *Create*
+[start=4]
+
+4. Fill the `Git Repo URL` by pressing `Try sample` and the `Name` with the desired application name and then click on *Create*.
 
 image::backups/app01-3.png[]
 
@@ -57,14 +60,21 @@ The second application will be an app based on Apache with a PVC attached, and w
 oc new-project application-02
 ----
 
+[start=2]
 2. Go to the Developer perspective in the OpenShift Console and follow the same procedure as in application 01.
 
 image::backups/app02-1.png[]
 
-3. Once the application is up and running, we need to attatch a PVC to it.
+[start=3]
+3. Once the application is up and running, we need to attach a PVC to it.
 
 image::backups/app02-2.png[]
 
+And create a new Persistent Volume Claim for this application.
+
+image::backups/app02-3.png[]
+
+[start=4]
 4. Create the backup.
 
 Then, we can proceed to create the backup. In this case, we have to make sure to set the `snapshotVolumes` parameter to `true`. The yaml view of the resource will look like this:
@@ -89,7 +99,7 @@ spec:
 [#app3]
 == Application 3
 
-The third demo will be an app based on Apache with a PVC attached, and we will be using Restic to perform the volume backups.
+The third demo will be an app based on Apache with a PVC attached, and we will be using `Restic` to perform the volume backups.
 
 1. Create a project called `application-03`
 
@@ -97,17 +107,20 @@ The third demo will be an app based on Apache with a PVC attached, and we will b
 oc new-project application-03
 ----
 
+[start=2]
 2. Go to the Developer perspective in the OpenShift Console and follow the same procedure as in application 01 and 02.
 
 image::backups/app03-1.png[]
 
-3. Once the application is up and running, we need to attatch a PVC to it.
+[start=3]
+3. Once the application is up and running, we need to attach a PVC to it.
 
 image::backups/app03-2.png[]
 
+[start=4]
 4. Create the backup.
 
-In this case, we need to set the parameter `defaultVolumesToRestic` to `true`. The yaml view of the resource will look like this:
+In this case, we need to set the parameter `defaultVolumesToFsBackup` to `true`. The yaml view of the resource will look like this:
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -121,7 +134,7 @@ metadata:
 spec:
   includedNamespaces:
     - application-03
-  defaultVolumesToRestic: true
+  defaultVolumesToFsBackup: true
 
 ----
 
@@ -136,15 +149,18 @@ The third demo will be an app based on Apache with a PVC attached, and we will b
 oc new-project application-04
 ----
 
+[start=2]
 2. Go to the Developer perspective in the OpenShift Console and follow the same procedure as in the previous demos.
 
 image::backups/app04-1.png[]
 
-3. Once the application is up and running, we need to attatch a PVC to it.
+[start=3]
+3. Once the application is up and running, we need to attach a PVC to it.
 
 image::backups/app04-2.png[]
 
-4. Before creating this backup, we need to enable the Data Mover feature in the DataProtectionApplication resource. This is done by adding the `vsm` plugin and setting the Data Mover feature to `true`:
+[start=4]
+4. Before creating this backup, we need to enable the Data Mover feature in the `DataProtectionApplication` resource. This is done by adding the `vsm` plugin and setting the Data Mover feature to `true`:
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -178,18 +194,18 @@ spec:
         - openshift
         - azure
         - csi
-        - vsm
+        - *vsm*
   features:
     dataMover:
       credentialName: datamover-restic-secret
-      enable: true
+      *enable: true*
       maxConcurrentBackupVolumes: '3'
       maxConcurrentRestoreVolumes: '3'
       pruneInterval: '1'
 ----
 
+[start=5]
 5. Create the backup, setting the `snapshotVolumes` parameter to `true`. The yaml view of the resource will look like this:
-
 
 [source,yaml,subs="+macros,+attributes"]
 
