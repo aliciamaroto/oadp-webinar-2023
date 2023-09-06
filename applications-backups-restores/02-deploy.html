@@ -193,7 +193,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>We will also need the VolSync Operator in order to perform the Data Mover feature. This can also be installed via the Operator Hub:</p>
+<p>We will also need the VolSync Operator in order to perform the Data Mover feature. This operator can also be installed via the Operator Hub:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -206,7 +206,7 @@
 <h2 id="configure"><a class="anchor" href="#configure"></a>Configure Operator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Once the Operator is installed, we need to have configured the object storage and a secret in OpenShift that contains the credentials needed to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object.</p>
+<p>Once the Operators are installed, and we need to have the object storage configured and a secret in OpenShift that contains the credentials needed to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object.</p>
 </div>
 <div class="sect2">
 <h3 id="_secret"><a class="anchor" href="#_secret"></a>Secret</h3>
@@ -228,7 +228,7 @@ AZURE_CLOUD_NAME=&lt;azure_cloud_name&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Create the Secret with the default name:</p>
+<p>And then, create the Secret with the default name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -261,7 +261,7 @@ AZURE_CLOUD_NAME=&lt;azure_cloud_name&gt;</pre>
 <p><code>velero.objectStorage</code>: This is the bucket that will be used to store the backups.</p>
 </li>
 <li>
-<p><code>features.datamover</code>: This section will be applied later on the workshop.</p>
+<p><code>features.datamover</code>: This section configures the Data Mover feature and will be applied later on the workshop.</p>
 </li>
 </ul>
 </div>
@@ -311,13 +311,13 @@ spec:
 <div class="ulist">
 <ul>
 <li>
-<p>Verify that both resources StorageClass and VolumeSnapshotClass support CSI.</p>
+<p>Verify that both resources <code>StorageClass</code> and <code>VolumeSnapshotClass</code> support CSI.</p>
 </li>
 <li>
-<p>Check that there is just one default VolumeSnapshotClass.</p>
+<p>Check that there is just one default <code>VolumeSnapshotClass</code>.</p>
 </li>
 <li>
-<p>The default VolumeSnapshotClass must have the <code>deletionPolicy</code> set to <code>Retain</code> and the label <code>velero.io/csi-volumesnapshot-class</code> set to <code>true</code>. This resource should look as follows:</p>
+<p>The default <code>VolumeSnapshotClass</code> must have the <code>deletionPolicy</code> set to <code>Retain</code> and the label <code>velero.io/csi-volumesnapshot-class</code> set to <code>true</code>. This resource should look as follows:</p>
 </li>
 </ul>
 </div>

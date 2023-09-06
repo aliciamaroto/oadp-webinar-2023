@@ -154,7 +154,7 @@
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create a project called <code>application-01</code></p>
+<p>Create a project called <code>application-01</code>.</p>
 </li>
 </ol>
 </div>
@@ -178,7 +178,7 @@
 <div class="olist arabic">
 <ol class="arabic" start="3">
 <li>
-<p>In the developer catalogue choose the application <strong>Apache HTTP Server (httpd)</strong> <em>Builder image</em>.</p>
+<p>In the developer catalogue choose the application <strong>Apache HTTP Server (httpd)</strong>  - <em>Builder image</em>.</p>
 </li>
 </ol>
 </div>
@@ -190,7 +190,7 @@
 <div class="olist arabic">
 <ol class="arabic" start="4">
 <li>
-<p>Fill the <code>Git Repo URL</code> by pressing <code>Try sample</code> and the <code>Name</code> with the desired application name and then click on <strong>Create</strong>.</p>
+<p>Fill the <strong>Git Repo URL</strong> by selecting <strong>Try sample</strong> and the <strong>Name</strong> with the desired application name and then click on <strong>Create</strong>.</p>
 </li>
 </ol>
 </div>
@@ -200,7 +200,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section. The yaml view of the resource will look like this:</p>
+<p>Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section. The <code>yaml</code> view of the resource will look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -214,13 +214,21 @@ spec:
     - application-01</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>In order to check that the backup has been performed successfully, it has to be masked as <strong>Completed</strong>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app01-4.png" alt="app01 4">
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="app2"><a class="anchor" href="#app2"></a>Application 2</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The second application will be an app based on Apache with a PVC attached, and we will be using Snapshots to perform the volume backups.</p>
+<p>The second application will be an app based on Apache with a PVC attached, and we will be using <strong>Snapshots</strong> to perform the volume backups.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -274,7 +282,7 @@ spec:
 </ol>
 </div>
 <div class="paragraph">
-<p>Then, we can proceed to create the backup. In this case, we have to make sure to set the <code>snapshotVolumes</code> parameter to <code>true</code>. The yaml view of the resource will look like this:</p>
+<p>Then, we can proceed to create the backup. In this case, we have to make sure to set the <code>snapshotVolumes</code> parameter to <code>true</code>. The <code>yaml</code> view of the resource will look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -289,6 +297,14 @@ spec:
   snapshotVolumes: true</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>In order to check that the backup has been performed successfully, it has to be masked as <strong>Completed</strong>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app02-4.png" alt="app02 4">
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -300,7 +316,7 @@ spec:
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create a project called <code>application-03</code></p>
+<p>Create a project called <code>application-03</code>.</p>
 </li>
 </ol>
 </div>
@@ -341,7 +357,7 @@ spec:
 </ol>
 </div>
 <div class="paragraph">
-<p>In this case, we need to set the parameter <code>defaultVolumesToFsBackup</code> to <code>true</code>. The yaml view of the resource will look like this:</p>
+<p>In this case, we need to set the parameter <code>defaultVolumesToFsBackup</code> to <code>true</code>. The <code>yaml</code> view of the resource will look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -356,6 +372,14 @@ spec:
   defaultVolumesToFsBackup: true</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>In order to check that the backup has been performed successfully, it has to be masked as <strong>Completed</strong>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/backups/app03-3.png" alt="app03 3">
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -367,7 +391,7 @@ spec:
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create a project called <code>application-04</code></p>
+<p>Create a project called <code>application-04</code>.</p>
 </li>
 </ol>
 </div>
@@ -451,7 +475,7 @@ spec:
 <div class="olist arabic">
 <ol class="arabic" start="5">
 <li>
-<p>Create the backup, setting the <code>snapshotVolumes</code> parameter to <code>true</code>. The yaml view of the resource will look like this:</p>
+<p>Create the backup, setting the <code>snapshotVolumes</code> parameter to <code>true</code>. The <code>yaml</code> view of the resource will look like this:</p>
 </li>
 </ol>
 </div>
@@ -466,6 +490,14 @@ spec:
   includedNamespaces:
     - application-04
   snapshotVolumes: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In order to check that the backup has been performed successfully, it has to be masked as <strong>Completed</strong>.</p>
+</div>
+<div class="imageblock unresolved">
+<div class="content">
+<img src="backups/app04-3.png" alt="app04 3">
 </div>
 </div>
 </div>
