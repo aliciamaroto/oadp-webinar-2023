@@ -9,28 +9,29 @@ image::backups/backup.png[]
 
 The first application will be a simple application based on Apache. We can create the application as follows:
 
-1. Create a project called `application-01`
+1. Create a project called `application-01`.
 
 ----
 oc new-project application-01
 ----
+
 [start=2]
 2. Go to the Developer perspective in the OpenShift Console.
 
 image::backups/app01-1.png[]
 
 [start=3]
-3. In the developer catalogue choose the application *Apache HTTP Server (httpd)* _Builder image_. 
+3. In the developer catalogue choose the application *Apache HTTP Server (httpd)*  - _Builder image_. 
 
 image::backups/app01-2.png[]
 
 [start=4]
 
-4. Fill the `Git Repo URL` by pressing `Try sample` and the `Name` with the desired application name and then click on *Create*.
+4. Fill the *Git Repo URL* by selecting *Try sample* and the *Name* with the desired application name and then click on *Create*.
 
 image::backups/app01-3.png[]
 
-Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section. The yaml view of the resource will look like this:
+Once the application is up and running, we can perform our first backup. In order to create the backup, in the Administrator view, go to the OADP Operator and then to the Backup section. The `yaml` view of the resource will look like this:
 
 
 [source,yaml,subs="+macros,+attributes"]
@@ -48,11 +49,15 @@ spec:
 
 ----
 
+In order to check that the backup has been performed successfully, it has to be masked as *Completed*.
+
+image::backups/app01-4.png[]
+
 
 [#app2]
 == Application 2
 
-The second application will be an app based on Apache with a PVC attached, and we will be using Snapshots to perform the volume backups.
+The second application will be an app based on Apache with a PVC attached, and we will be using *Snapshots* to perform the volume backups.
 
 1. Create a project called `application-02`
 
@@ -77,7 +82,7 @@ image::backups/app02-3.png[]
 [start=4]
 4. Create the backup.
 
-Then, we can proceed to create the backup. In this case, we have to make sure to set the `snapshotVolumes` parameter to `true`. The yaml view of the resource will look like this:
+Then, we can proceed to create the backup. In this case, we have to make sure to set the `snapshotVolumes` parameter to `true`. The `yaml` view of the resource will look like this:
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -95,13 +100,16 @@ spec:
 
 ----
 
+In order to check that the backup has been performed successfully, it has to be masked as *Completed*.
+
+image::backups/app02-4.png[]
 
 [#app3]
 == Application 3
 
 The third demo will be an app based on Apache with a PVC attached, and we will be using `Restic` to perform the volume backups.
 
-1. Create a project called `application-03`
+1. Create a project called `application-03`.
 
 ----
 oc new-project application-03
@@ -120,7 +128,7 @@ image::backups/app03-2.png[]
 [start=4]
 4. Create the backup.
 
-In this case, we need to set the parameter `defaultVolumesToFsBackup` to `true`. The yaml view of the resource will look like this:
+In this case, we need to set the parameter `defaultVolumesToFsBackup` to `true`. The `yaml` view of the resource will look like this:
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -138,12 +146,16 @@ spec:
 
 ----
 
+In order to check that the backup has been performed successfully, it has to be masked as *Completed*.
+
+image::backups/app03-3.png[]
+
 [#app4]
 == Application 4
 
 The third demo will be an app based on Apache with a PVC attached, and we will be using using Snapshots and Data Mover for the the volume backups.
 
-1. Create a project called `application-04`
+1. Create a project called `application-04`.
 
 ----
 oc new-project application-04
@@ -205,7 +217,7 @@ spec:
 ----
 
 [start=5]
-5. Create the backup, setting the `snapshotVolumes` parameter to `true`. The yaml view of the resource will look like this:
+5. Create the backup, setting the `snapshotVolumes` parameter to `true`. The `yaml` view of the resource will look like this:
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -222,3 +234,7 @@ spec:
   snapshotVolumes: true
 
 ----
+
+In order to check that the backup has been performed successfully, it has to be masked as *Completed*.
+
+image::backups/app04-3.png[]

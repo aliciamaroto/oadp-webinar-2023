@@ -31,6 +31,15 @@ spec:
 
 ----
 
+In order to check that the restore has finished successfully, it has to be marked as *Completed*.
+
+image::restores/app01-1.png[]
+
+And the `application-01` project has to be available again in the cluster. 
+
+----
+oc project application-01
+----
 
 [#snapshot]
 == Restore application with persistent storage using Snapshots
@@ -59,6 +68,16 @@ spec:
 
 ----
 
+In order to check that the restore has finished successfully, it has to be marked as *Completed*.
+
+image::restores/app02-1.png[]
+
+And the `application-02` project has to be available again in the cluster. 
+
+----
+oc project application-02
+----
+
 [#restic]
 == Restore application with persistent storage using Restic
 
@@ -85,6 +104,15 @@ spec:
 
 ----
 
+In order to check that the restore has finished successfully, it has to be marked as *Completed*.
+
+image::restores/app03-1.png[]
+
+And the `application-03` project has to be available again in the cluster. 
+
+----
+oc project application-03
+----
 
 [#datamover]
 == Restore application with persistent storage using Data Mover
@@ -111,4 +139,14 @@ spec:
   backupName: backup-app04
   restorePVs: true
 
+----
+
+In order to check that the restore has finished successfully, it has to be marked as *Completed*.
+
+image::restores/app04-1.png[]
+
+And the `application-04` project has to be available again in the cluster. 
+
+----
+oc project application-04
 ----

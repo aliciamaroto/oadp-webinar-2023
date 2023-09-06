@@ -25,7 +25,7 @@ The OADP Operator can be installed through the Operator Hub as shown below:
 
 image::deploy/oadp-install.png[]
 
-We will also need the VolSync Operator in order to perform the Data Mover feature. This can also be installed via the Operator Hub:
+We will also need the VolSync Operator in order to perform the Data Mover feature. This operator can also be installed via the Operator Hub:
 
 image::deploy/volsync-install.png[]
 
@@ -33,7 +33,7 @@ image::deploy/volsync-install.png[]
 [#configure]
 == Configure Operator
 
-Once the Operator is installed, we need to have configured the object storage and a secret in OpenShift that contains the credentials needed to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object. 
+Once the Operators are installed, and we need to have the object storage configured and a secret in OpenShift that contains the credentials needed to access the storage locations. Finally, we need to create an instance of the Data Protection Application Object. 
 
 === Secret
 
@@ -51,7 +51,7 @@ AZURE_STORAGE_ACCOUNT_ACCESS_KEY=<storage_account_access_key>
 AZURE_CLOUD_NAME=<azure_cloud_name>
 ----
 
-Create the Secret with the default name:
+And then, create the Secret with the default name:
 
 ----
 oc create secret generic cloud-credentials-azure -n openshift-adp --from-file cloud=credentials-velero
@@ -68,7 +68,7 @@ The resource should look as follows:
 - `velero.config`: Complete these fields with the storage location configuration.
 - `credential.name`: Secret name created in the previous section.
 - `velero.objectStorage`: This is the bucket that will be used to store the backups. 
-- `features.datamover`: This section will be applied later on the workshop.  
+- `features.datamover`: This section configures the Data Mover feature and will be applied later on the workshop.  
 
 [source,yaml,subs="+macros,+attributes"]
 
@@ -113,11 +113,11 @@ spec:
 
 === Data Mover Prerequisites
 
-- Verify that both resources StorageClass and VolumeSnapshotClass support CSI.
+- Verify that both resources `StorageClass` and `VolumeSnapshotClass` support CSI.
 
-- Check that there is just one default VolumeSnapshotClass.
+- Check that there is just one default `VolumeSnapshotClass`.
 
-- The default VolumeSnapshotClass must have the `deletionPolicy` set to `Retain` and the label `velero.io/csi-volumesnapshot-class` set to `true`. This resource should look as follows:
+- The default `VolumeSnapshotClass` must have the `deletionPolicy` set to `Retain` and the label `velero.io/csi-volumesnapshot-class` set to `true`. This resource should look as follows:
 
 [source,yaml,subs="+macros,+attributes"]
 
